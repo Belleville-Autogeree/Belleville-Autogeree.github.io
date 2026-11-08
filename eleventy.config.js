@@ -37,6 +37,11 @@ export default function (eleventyConfig) {
     eleventyConfig.ignores.add("README.md");
     eleventyConfig.ignores.add(".github/**");
 
+    // TEMPORAIRE (jusqu'à l'étape 4, où le modèle des pages sera prêt) :
+    // les documents des ressources ne sont pas encore transformés en pages.
+    eleventyConfig.ignores.add("fr/ressources/documents/**");
+    eleventyConfig.ignores.add("fr/ressources/exemples/**");
+
     return {
         // Seuls ces types de fichiers sont des modèles à transformer.
         // Les .html ne sont pas dans la liste : ils restent intacts.

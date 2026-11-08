@@ -5,12 +5,19 @@
 # de fr/calendar/agenda.json : c'est ce que lit agenda.js.
 # ==========================================================
 
-# Où ranger les images envoyées depuis Pages CMS.
+# Où ranger les fichiers envoyés depuis Pages CMS.
 # input  : le dossier du dépôt où le fichier est enregistré
-# output : le chemin écrit dans agenda.json (depuis la racine du site)
+# output : le chemin écrit dans le contenu (depuis la racine du site)
+# Chaque champ image / fichier dit quel dossier il utilise (options: media: …).
 media:
-  input: generalitems/images/agenda
-  output: /generalitems/images/agenda
+  - name: agenda                      # images des événements (écrites dans agenda.json)
+    input: generalitems/images/agenda
+    output: /generalitems/images/agenda
+
+  - name: ressources                  # images de preview, images des textes et PDF des ressources
+    input: fr/ressources/fichiers
+    output: /fr/ressources/fichiers
+    extensions: [jpg, jpeg, png, webp, pdf]
 
 content:
   - name: agenda
@@ -93,3 +100,149 @@ content:
             label: Image
             description: Facultatif (affiche, photo…). Affichée dans la fenêtre de l'événement. Pas de visage reconnaissable sans accord.
             type: image
+            options:
+              media: agenda             # le dossier des images de l'agenda (voir media: en haut)
+
+  # ==========================================================
+  # RESSOURCES
+  # Un document = un fichier .md dans fr/ressources/documents/.
+  # Les champs sont dans l'en-tête du fichier ; le corps du texte
+  # (champ « body ») est écrit en dessous, en Markdown.
+  # Les noms des champs (name:) doivent rester identiques : c'est
+  # ce que lit Eleventy pour fabriquer les pages et l'index.
+  #
+  # Le format du document est déduit tout seul :
+  #   un PDF est joint → page PDF ;
+  #   sinon, un lien est rempli → page lien ;
+  #   sinon → texte publié directement.
+  # ==========================================================
+  - name: ressources
+    label: Ressources
+    type: collection                  # plusieurs fichiers : un par document
+    path: fr/ressources/documents
+    format: yaml-frontmatter          # en-tête de champs + texte Markdown
+    filename: "{year}-{month}-{day}-{primary}.md"   # ex. 2026-11-08-compte-rendu-de-l-ag.md
+    view:
+      fields: [titre, date, nature, epingle]
+      primary: titre
+      sort: [date, titre]
+      default:
+        sort: date
+        order: desc                   # les plus récents en haut de la liste
+    fields:
+      # ---------- Toujours remplis ----------
+      - name: titre
+        label: Titre
+        type: string
+        required: true
+        options:
+          maxlength: 150
+
+      - name: date
+        label: Date de publication
+        description: Sert au classement sur le site (le plus récent en premier).
+        type: date
+        required: true
+        options:
+          format: "yyyy-MM-dd"          # → "2026-11-08"
+
+      - name: nature
+        label: Nature du document
+        type: select
+        required: true
+        options:
+          values:
+            - value: compte-rendu
+              label: Compte rendu
+            - value: manifeste
+              label: Manifeste
+            - value: organisation
+              label: Organisation
+            - value: evenement
+              label: Événement
+            - value: presse
+              label: Presse (ils parlent de nous)
+            - value: analyse
+              label: Analyse
+
+      - name: poles
+        label: Pôles liés
+        description: Au moins un.
+        type: select
+        required: true
+        options:
+          multiple: true
+          min: 1
+          values:
+            - value: section-pilote
+              label: Section pilote
+            - value: releve
+              label: Relevé
+            - value: mouvement-social
+              label: Mouvement social
+            - value: graphisme
+              label: Graphisme
+            - value: budget
+              label: Budget
+            - value: occupation-ecole
+              label: Occupation de l'école
+            - value: communication
+              label: Communication
+
+      - name: image
+        label: Image de preview
+        description: >-
+          Format portrait 3:4, idéalement 1080 × 1440 px (format publication Instagram).
+          JPG, PNG ou WebP, 2 Mo maximum : au-delà, le document n'est pas publié.
+          Pas de visage reconnaissable sans accord.
+        type: image
+        options:
+          media: ressources
+          extensions: [jpg, jpeg, png, webp]
+          rename: safe                # nom de fichier sans espaces ni accents
+
+      - name: epingle
+        label: Épingler en tête de liste
+        description: Le document s'affiche avant tous les autres, avec un repère.
+        type: boolean
+        default: false
+
+      # ---------- Selon le cas ----------
+      - name: sous_titre
+        label: Sous-titre
+        description: Facultatif. Affiché sous le titre, sur la page du document.
+        type: string
+        options:
+          maxlength: 250
+
+      - name: pdf
+        label: Fichier PDF (pour un document PDF)
+        description: >-
+          Joindre un PDF transforme la page en lecteur PDF. 10 Mo maximum :
+          au-delà, le document n'est pas publié. Relis le PDF avant : il sera
+          public et téléchargeable par tout le monde (pas de nom, d'adresse ni de
+          numéro de téléphone de personne).
+        type: file
+        options:
+          media: ressources
+          extensions: [pdf]
+          rename: safe
+
+      - name: lien
+        label: Lien externe (pour un article, une vidéo…)
+        description: Adresse complète, qui commence par https://. Ignoré si un PDF est joint.
+        type: string
+        pattern:
+          regex: "^(https?://\\S+)?$"   # vide, ou une adresse web sans espace
+          message: "L'adresse doit commencer par https:// et ne pas contenir d'espace."
+
+      - name: body
+        label: Corps du texte
+        description: >-
+          Le texte complet, pour un texte publié directement. Pour un PDF ou un
+          lien, facultatif : quelques lignes de présentation, affichées au-dessus.
+        type: rich-text
+        options:
+          media: ressources
+          format: markdown
+          rename: safe
