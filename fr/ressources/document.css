@@ -1,0 +1,287 @@
+/* ==========================================================
+   PAGE D'UN DOCUMENT (texte, PDF, lien) – styles
+   Tout ce qui se règle (couleurs, tailles, espacements) est
+   dans :root juste en dessous. Retouche le design ici.
+   Le fond reprend le bleu de la page Ressources ; le document
+   est posé dessus comme une feuille.
+   ========================================================== */
+
+:root {
+    /* ---------- Couleurs ---------- */
+    --couleur-fond: #527ab5;          /* le bleu du disque de l'accueil */
+    --couleur-feuille: #f5f9a3;       /* la feuille du document : le jaune du site */
+    --couleur-texte: #2b1a1f;
+    --couleur-bordeaux: #913a4e;      /* accents, liens, boutons */
+    --couleur-texte-bouton: #f5f9a3;
+    --couleur-retour: #f5f9a3;        /* lien « Toutes les ressources », sur le bleu */
+    --couleur-filet: rgb(43 26 31 / 25%);
+
+    /* Grain du fond (comme le disque bleu de l'accueil) */
+    --grain-fond-melange: overlay;
+    --grain-fond-intensite: 2.1;
+
+    /* ---------- Typographie ---------- */
+    --police: 'raleway', system-ui, sans-serif;
+    --taille-texte: 1.05rem;
+    --interligne: 1.6;
+    --taille-titre: clamp(1.7rem, 4vw, 2.4rem);
+    --taille-sous-titre: 1.2rem;
+    --taille-petit: 0.9rem;           /* nature, date, pôles */
+
+    /* ---------- Mise en page ---------- */
+    --largeur-feuille: 760px;
+    --marge-page: 16px;
+    --marge-feuille: clamp(20px, 5vw, 48px);
+    --rayon-bouton: 10px;             /* rectangles à bords arrondis (comme les filtres) */
+    --hauteur-lecteur-pdf: 85vh;
+    --espace: 8px;
+}
+
+/* ---------- Polices ---------- */
+@font-face {
+    font-family: 'raleway';
+    src: url('/generalitems/fonts/Raleway-Regular.ttf');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'raleway';
+    src: url('/generalitems/fonts/Raleway-Italic.ttf');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'raleway';
+    src: url('/generalitems/fonts/Raleway-Bold.ttf');
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'raleway';
+    src: url('/generalitems/fonts/Raleway-ExtraBold.ttf');
+    font-weight: 800;
+    font-display: swap;
+}
+
+/* ---------- Page ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: var(--marge-page);
+    background: var(--couleur-fond);
+    color: var(--couleur-texte);
+    font-family: var(--police);
+    font-size: var(--taille-texte);
+    line-height: var(--interligne);
+}
+
+/* Fond bleu grainé (même principe que l'agenda : couleur + calque de bruit) */
+.fond-grain {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    isolation: isolate;
+    background-color: var(--couleur-fond);
+    pointer-events: none;
+}
+
+.fond-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain-image);
+    background-size: var(--grain-tile);
+    image-rendering: var(--grain-rendering);
+    filter: contrast(var(--grain-fond-intensite));
+    mix-blend-mode: var(--grain-fond-melange);
+}
+
+/* ---------- Retour à la liste ---------- */
+.doc-nav {
+    max-width: var(--largeur-feuille);
+    margin: 0 auto var(--espace);
+}
+
+.doc-retour {
+    color: var(--couleur-retour);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.doc-retour:hover,
+.doc-retour:focus-visible {
+    text-decoration: underline;
+}
+
+/* ---------- La feuille ---------- */
+.doc-feuille {
+    max-width: var(--largeur-feuille);
+    margin: 0 auto;
+    padding: var(--marge-feuille);
+    background: var(--couleur-feuille);
+}
+
+.doc-nature {
+    margin: 0 0 var(--espace);
+    color: var(--couleur-bordeaux);
+    font-size: var(--taille-petit);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.doc-titre {
+    margin: 0;
+    font-size: var(--taille-titre);
+    font-weight: 800;
+    line-height: 1.15;
+    overflow-wrap: anywhere;          /* un très long mot ne déborde pas */
+}
+
+.doc-sous-titre {
+    margin: var(--espace) 0 0;
+    font-size: var(--taille-sous-titre);
+    font-style: italic;
+}
+
+.doc-infos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 calc(var(--espace) * 2);
+    margin: calc(var(--espace) * 2) 0 0;
+    padding-top: var(--espace);
+    border-top: 1px solid var(--couleur-filet);
+    font-size: var(--taille-petit);
+}
+
+.doc-infos:empty {
+    display: none;
+}
+
+.doc-image {
+    display: block;
+    width: 100%;
+    max-width: 540px;
+    height: auto;
+    margin: calc(var(--espace) * 3) auto 0;
+}
+
+/* ---------- Corps du texte (écrit dans Pages CMS) ---------- */
+.doc-texte {
+    margin-top: calc(var(--espace) * 3);
+    overflow-wrap: break-word;
+}
+
+.doc-texte > :first-child {
+    margin-top: 0;
+}
+
+.doc-texte h2,
+.doc-texte h3 {
+    margin: 1.6em 0 0.4em;
+    line-height: 1.25;
+}
+
+.doc-texte a {
+    color: var(--couleur-bordeaux);
+    font-weight: 700;
+}
+
+.doc-texte blockquote {
+    margin: 1.2em 0;
+    padding-left: calc(var(--espace) * 2);
+    border-left: 4px solid var(--couleur-bordeaux);
+    font-style: italic;
+}
+
+.doc-texte img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1.2em auto;
+}
+
+/* Image introuvable : la construction lui a retiré son adresse ; on ne l'affiche pas */
+.doc-texte img:not([src]) {
+    display: none;
+}
+
+.doc-texte table {
+    display: block;                   /* un grand tableau défile, sans élargir la page */
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+}
+
+.doc-texte th,
+.doc-texte td {
+    padding: 4px 8px;
+    border: 1px solid var(--couleur-filet);
+}
+
+/* ---------- Boutons (PDF, lien) ---------- */
+.doc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--espace) calc(var(--espace) * 2);
+    margin: calc(var(--espace) * 3) 0 0;
+}
+
+.doc-bouton {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: var(--rayon-bouton);
+    background: var(--couleur-bordeaux);
+    color: var(--couleur-texte-bouton);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.doc-bouton:hover {
+    filter: brightness(1.15);
+}
+
+.doc-bouton:focus-visible {
+    outline: 3px solid var(--couleur-texte);
+    outline-offset: 3px;
+}
+
+.doc-domaine {
+    font-size: var(--taille-petit);
+}
+
+/* Lecteur PDF intégré (affiché par document.js, seulement sur ordinateur) */
+.doc-pdf-lecteur {
+    display: block;
+    width: 100%;
+    height: var(--hauteur-lecteur-pdf);
+    margin-top: calc(var(--espace) * 2);
+    border: none;
+    background: #fff;
+}
+
+.doc-pdf-lecteur[hidden] {
+    display: none;
+}
+
+/* Caché à l'écran, mais lu par les lecteurs d'écran */
+.visuellement-masque {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}

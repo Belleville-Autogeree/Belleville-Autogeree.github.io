@@ -1,6 +1,6 @@
 ---
 titre: "Exemple – Compte rendu de l'assemblée générale"
-date: 2026-11-02
+date_publication: 2026-11-02
 nature: compte-rendu
 poles:
   - mouvement-social

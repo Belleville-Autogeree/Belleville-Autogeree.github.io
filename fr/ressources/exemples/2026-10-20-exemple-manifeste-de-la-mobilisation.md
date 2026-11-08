@@ -1,6 +1,6 @@
 ---
 titre: "Exemple – Manifeste de la mobilisation"
-date: 2026-10-20
+date_publication: 2026-10-20
 nature: manifeste
 poles:
   - section-pilote

@@ -1,0 +1,105 @@
+{#- ==========================================================
+    MODÈLE UNIQUE DES PAGES DE DOCUMENT (texte, PDF, lien)
+    Eleventy l'applique à chaque fiche .md des ressources.
+    - ressource : les infos vérifiées par _construction/preparer.mjs
+    - textes    : les textes de l'interface (_construction/reglages.mjs)
+    - content   : le corps du texte, déjà transformé de Markdown en HTML
+    Les {{ … }} sont protégés automatiquement (un titre avec < ou "
+    ne peut pas casser la page), sauf content, marqué « safe ».
+    ========================================================== -#}
+{%- set r = ressource -%}
+{%- set t = textes -%}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ r.titre }} – {{ t.nomSite }}</title>
+    <meta name="description" content="{{ r.description }}">
+    <link rel="canonical" href="{{ r.urlComplete }}">
+
+    <!-- Aperçu affiché quand le lien est partagé (WhatsApp, Signal, Instagram…) -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="{{ t.nomSite }}">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="{{ r.titre }}">
+    <meta property="og:description" content="{{ r.description }}">
+    <meta property="og:url" content="{{ r.urlComplete }}">
+    {%- if r.images %}
+    <meta property="og:image" content="{{ r.images.partage.urlComplete }}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="{{ r.images.partage.largeur }}">
+    <meta property="og:image:height" content="{{ r.images.partage.hauteur }}">
+    <meta name="twitter:card" content="summary_large_image">
+    {%- endif %}
+
+    <link rel="stylesheet" href="/fr/grain.css">
+    <link rel="stylesheet" href="/fr/ressources/document.css">
+    <script src="/fr/grain.js" defer></script>
+    {%- if r.format == "pdf" %}
+    <script src="/fr/ressources/document.js" defer></script>
+    {%- endif %}
+</head>
+<body class="format-{{ r.format }}">
+    <!-- Fond bleu grainé, fixe derrière toute la page -->
+    <div class="fond-grain" aria-hidden="true"></div>
+
+    <nav class="doc-nav">
+        <a class="doc-retour" href="/fr/ressources/ressources.html"><span aria-hidden="true">←</span> {{ t.retour }}</a>
+    </nav>
+
+    <main class="doc">
+        <article class="doc-feuille nature-{{ r.nature or 'neutre' }}">
+            <header class="doc-entete">
+                {%- if r.natureNom %}
+                <p class="doc-nature">{{ r.natureNom }}</p>
+                {%- endif %}
+                <h1 class="doc-titre">{{ r.titre }}</h1>
+                {%- if r.sousTitre %}
+                <p class="doc-sous-titre">{{ r.sousTitre }}</p>
+                {%- endif %}
+                <p class="doc-infos">
+                    {%- if r.date %}
+                    <time datetime="{{ r.date }}">{{ r.dateAffichee }}</time>
+                    {%- endif %}
+                    {%- if r.polesNoms.length %}
+                    <span class="doc-poles"><span class="visuellement-masque">{{ t.poles }} : </span>{{ r.polesNoms | join(" · ") }}</span>
+                    {%- endif %}
+                </p>
+            </header>
+
+            {#- Image : pour un texte ou un lien (pour un PDF, c'est le PDF qu'on montre).
+                eleventy:ignore = déjà réduite par preparer.mjs, à ne pas retraiter. #}
+            {%- if r.images and r.format != "pdf" %}
+            <img class="doc-image" src="{{ r.images.page.src }}" srcset="{{ r.images.page.srcset }}"
+                 sizes="(min-width: 640px) 540px, 100vw"
+                 width="{{ r.images.page.largeur }}" height="{{ r.images.page.hauteur }}" alt="" eleventy:ignore>
+            {%- endif %}
+
+            {%- if content | trim %}
+            <div class="doc-texte">
+                {{ content | safe }}
+            </div>
+            {%- endif %}
+
+            {%- if r.format == "pdf" %}
+            <!-- PDF : le bouton marche partout. Le lecteur intégré n'est affiché
+                 que s'il fonctionne (ordinateur) : document.js lui donne son adresse. -->
+            <section class="doc-pdf">
+                <p class="doc-actions">
+                    <a class="doc-bouton" href="{{ r.pdf }}" target="_blank" rel="noopener">{{ t.ouvrirPdf }}<span class="visuellement-masque"> {{ t.nouvelOnglet }}</span></a>
+                </p>
+                <iframe class="doc-pdf-lecteur" data-src="{{ r.pdf }}#view=FitH" title="{{ t.lecteurPdf(r.titre) }}" hidden></iframe>
+            </section>
+            {%- endif %}
+
+            {%- if r.format == "lien" %}
+            <p class="doc-actions">
+                <a class="doc-bouton" href="{{ r.lien }}" target="_blank" rel="noopener noreferrer">{{ t.ouvrirLien }} <span aria-hidden="true">↗</span><span class="visuellement-masque"> {{ t.nouvelOnglet }}</span></a>
+                <span class="doc-domaine">{{ t.lienExterne(r.lienDomaine) }}</span>
+            </p>
+            {%- endif %}
+        </article>
+    </main>
+</body>
+</html>

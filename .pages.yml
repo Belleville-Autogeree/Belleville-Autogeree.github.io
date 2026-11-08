@@ -122,12 +122,13 @@ content:
     path: fr/ressources/documents
     format: yaml-frontmatter          # en-tête de champs + texte Markdown
     filename: "{year}-{month}-{day}-{primary}.md"   # ex. 2026-11-08-compte-rendu-de-l-ag.md
+    exclude: [documents.11tydata.mjs] # réglages d'Eleventy rangés dans ce dossier : pas un document
     view:
-      fields: [titre, date, nature, epingle]
+      fields: [titre, date_publication, nature, epingle]
       primary: titre
-      sort: [date, titre]
+      sort: [date_publication, titre]
       default:
-        sort: date
+        sort: date_publication
         order: desc                   # les plus récents en haut de la liste
     fields:
       # ---------- Toujours remplis ----------
@@ -138,7 +139,9 @@ content:
         options:
           maxlength: 150
 
-      - name: date
+      # « date » tout court est un mot réservé d'Eleventy (une date invalide ferait
+      # échouer toute la construction du site) : d'où le nom date_publication.
+      - name: date_publication
         label: Date de publication
         description: Sert au classement sur le site (le plus récent en premier).
         type: date

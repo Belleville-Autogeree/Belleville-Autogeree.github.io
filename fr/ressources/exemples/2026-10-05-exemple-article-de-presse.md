@@ -1,6 +1,6 @@
 ---
 titre: "Exemple – Article de presse sur la mobilisation"
-date: 2026-10-05
+date_publication: 2026-10-05
 nature: presse
 poles:
   - communication
