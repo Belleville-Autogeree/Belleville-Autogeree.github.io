@@ -154,7 +154,8 @@ function creer(balise, classe, contenu) {
 
 // Image de remplacement : aplat de la couleur de la nature, avec le titre
 function creerRemplacement(doc) {
-    const remplacement = creer("span", "preview-remplacement", doc.titre);
+    const remplacement = creer("span", "preview-remplacement");
+    remplacement.append(creer("span", "preview-remplacement-titre", doc.titre));
     remplacement.setAttribute("aria-hidden", "true"); // le titre est déjà lu juste en dessous
     return remplacement;
 }
@@ -165,8 +166,8 @@ function creerImage(doc) {
     image.src = doc.vignette.src;
     if (doc.vignette.srcset) {
         image.srcset = doc.vignette.srcset;
-        // largeur affichée : 1 colonne sur 3 (max. 1200 px de liste), 1 sur 2 sur téléphone
-        image.sizes = "(min-width: 768px) min(33vw, 400px), 50vw";
+        // largeur affichée : au plus 340 px sur ordinateur (--largeur-max-carte), la moitié de l'écran sur téléphone
+        image.sizes = "(min-width: 768px) 340px, 50vw";
     }
     if (doc.vignette.largeur && doc.vignette.hauteur) {
         image.width = doc.vignette.largeur;   // réserve la place avant le chargement (la page ne saute pas)
@@ -180,6 +181,25 @@ function creerImage(doc) {
     return image;
 }
 
+// Repère « épinglé » : une punaise (tête ronde + pointe), dessinée en SVG.
+// Le mot « Épinglé » reste lisible par les lecteurs d'écran.
+function creerPunaise() {
+    const repere = creer("span", "preview-epingle");
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("aria-hidden", "true");
+    const tete = document.createElementNS(ns, "circle");
+    tete.setAttribute("cx", "12");
+    tete.setAttribute("cy", "8");
+    tete.setAttribute("r", "6");
+    const pointe = document.createElementNS(ns, "path");
+    pointe.setAttribute("d", "M10.6 13.4h2.8L12 23z");
+    svg.append(tete, pointe);
+    repere.append(svg, creer("span", "visuellement-masque", T.epingle));
+    return repere;
+}
+
 // Une preview : un lien vers la page du document
 function creerPreview(doc) {
     const element = creer("li", `preview nature-${doc.nature ?? "neutre"}`);
@@ -190,7 +210,7 @@ function creerPreview(doc) {
 
     const visuel = creer("span", "preview-visuel");
     visuel.append(doc.vignette ? creerImage(doc) : creerRemplacement(doc));
-    if (doc.epingle) visuel.append(creer("span", "preview-epingle", T.epingle));
+    if (doc.epingle) visuel.append(creerPunaise());
 
     // Dans un lien, on n'a droit qu'à du contenu non interactif : titre, puis des <span> en display: block
     const infos = creer("span", "preview-infos");
@@ -310,3 +330,11 @@ async function chargerIndex() {
 remplirTextesFixes();
 document.getElementById("bouton-voir-plus").addEventListener("click", voirPlus);
 chargerIndex();
+
+// Hauteur de l'en-tête, transmise au CSS (--hauteur-entete) : elle sert à calculer
+// la taille des previews pour que 2 lignes tiennent à l'écran (voir ressources.css).
+// Recalculée quand l'en-tête change de taille (filtres, largeur de la fenêtre).
+const entete = document.getElementById("ressources-entete");
+new ResizeObserver(() => {
+    document.documentElement.style.setProperty("--hauteur-entete", `${entete.offsetHeight}px`);
+}).observe(entete);

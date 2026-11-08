@@ -12,9 +12,9 @@
     --couleur-bordeaux: #913a4e;      /* le rouge du site : accents, filtres sélectionnés */
     --couleur-texte-sur-fond: #f5f9a3;     /* textes posés directement sur le bleu (compteur, messages) */
 
-    /* Grain du fond (comme le disque bleu de l'accueil) */
-    --grain-fond-melange: overlay;
-    --grain-fond-intensite: 2.1;
+    /* Grain du fond (léger, mêmes réglages que le fond de l'agenda) */
+    --grain-fond-melange: hard-light; /* mode de fusion (Lumière crue) */
+    --grain-fond-intensite: 0.2;      /* contraste du bruit ; 0 = pas de grain */
 
     /* Disque Calendrier (jaune, devant) */
     --couleur-calendrier: #f5f9a3;
@@ -31,8 +31,8 @@
     /* Previews */
     --couleur-carte: #f5f9a3;         /* fond du bloc texte sous l'image */
     --couleur-nature: #913a4e;        /* « Compte rendu », « Manifeste »… */
-    --couleur-epingle: #2b1a1f;       /* repère « Épinglé » : sombre, lisible sur toutes les images */
-    --couleur-texte-epingle: #f5f9a3;
+    --couleur-epingle: #2b1a1f;       /* rond derrière la punaise : sombre, visible sur toutes les images */
+    --couleur-punaise: #f5f9a3;       /* la punaise */
     --couleur-focus: #f5f9a3;         /* contour au clavier, sur le bleu */
 
     /* Image de remplacement (document sans image), une couleur par nature – à caler à l'étape 8 */
@@ -47,16 +47,21 @@
     /* ---------- Typographie ---------- */
     --police: 'raleway', system-ui, sans-serif;
     --taille-texte: 1rem;
-    --taille-titre-carte: 1.05rem;
-    --taille-infos-carte: 0.8rem;     /* nature, pôles, date */
-    --taille-remplacement: clamp(1.1rem, 2.4vw, 1.8rem); /* titre écrit dans l'image de remplacement */
+    --taille-titre-carte: 0.95rem;
+    --taille-infos-carte: 0.75rem;    /* nature, pôles, date */
+    --taille-remplacement: 10cqi;     /* titre écrit dans l'image de remplacement : 10 % de la largeur de la carte */
 
     /* ---------- Grille des previews ---------- */
     --colonnes: 3;                    /* par ligne sur ordinateur (2 sur téléphone, plus bas) */
-    --ecart-grille: 20px;
-    --largeur-max-liste: 1200px;
+    --lignes-visibles: 2;             /* sur ordinateur : lignes entières visibles à l'ouverture de la page.
+                                         La taille des previews est calculée d'après la hauteur de l'écran. */
+    --largeur-min-carte: 150px;       /* jamais plus petites (écran très bas) */
+    --largeur-max-carte: 340px;       /* jamais plus grandes (très grand écran) */
+    --hauteur-infos: 6.6rem;          /* hauteur du bloc texte sous l'image (titre sur 2 lignes max.) */
+    --ecart-grille: 16px;
     --rayon-carte: 0;                 /* coins des previews (0 = carrés, comme les popups de l'agenda) */
-    --marge-interne-carte: 10px 12px 12px;
+    --marge-interne-carte: 8px 10px 10px;
+    --taille-punaise: 30px;           /* rond du repère « épinglé » */
 
     /* ---------- Bouton « Voir plus » (rectangle à bords arrondis, comme les filtres) ---------- */
     --rayon-bouton: 10px;
@@ -81,8 +86,9 @@
         --colonnes: 2;
         --ecart-grille: 12px;
         --diametre-calendrier: 108px;
-        --taille-titre-carte: 0.95rem;
+        --taille-titre-carte: 0.9rem;
         --marge-interne-carte: 8px 8px 10px;
+        --taille-punaise: 26px;
     }
 }
 
@@ -141,8 +147,7 @@ body {
 
 .fond-grain::before,
 .cercle-calendrier::before,
-.cercle-accueil::before,
-.preview-remplacement::before {
+.cercle-accueil::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -161,6 +166,8 @@ body {
    Une boîte immobile, découpée en rond par clip-path. Au
    survol du lien, seul le rayon du découpage grandit (le
    grain ne bouge pas).
+   Différence avec l'agenda : position: fixed, les disques
+   restent en haut à droite de l'écran quand la liste défile.
    ========================================================== */
 
 /* ---------- Disque Calendrier, jaune, en haut à droite ---------- */
@@ -168,7 +175,7 @@ body {
     --d: var(--diametre-calendrier);
     --r: calc(var(--d) / 2);
     --centre: calc(var(--d) * (0.5 - var(--debord-calendrier))); /* distance du centre aux bords haut et droit */
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -194,7 +201,7 @@ body:has(.lien-calendrier:focus-visible) .cercle-calendrier {
 
 /* Le calque du lien : un carré de la taille du disque, à la même place */
 .calque-calendrier {
-    position: absolute;
+    position: fixed;
     top: calc(var(--diametre-calendrier) * var(--debord-calendrier) * -1);
     right: calc(var(--diametre-calendrier) * var(--debord-calendrier) * -1);
     width: var(--diametre-calendrier);
@@ -220,7 +227,7 @@ body:has(.lien-calendrier:focus-visible) .cercle-calendrier {
     --d: calc(var(--diametre-calendrier) * var(--rapport-accueil));
     --r: calc(var(--d) / 2);
     --centre: calc(var(--diametre-calendrier) * (0.5 - var(--debord-calendrier))); /* = celui du jaune */
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -248,7 +255,7 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
 .calque-accueil {
     --d: calc(var(--diametre-calendrier) * var(--rapport-accueil));
     --centre: calc(var(--diametre-calendrier) * (0.5 - var(--debord-calendrier)));
-    position: absolute;
+    position: fixed;
     top: calc(var(--centre) - var(--d) / 2);
     right: calc(var(--centre) - var(--d) / 2);
     width: var(--d);
@@ -283,8 +290,6 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
    Liste des previews
    ========================================================== */
 .ressources {
-    max-width: var(--largeur-max-liste);
-    margin: 0 auto;
     padding: 0 var(--marge-page) calc(var(--marge-page) * 3);
 }
 
@@ -293,6 +298,7 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
     font-weight: 700;
 }
 
+/* Téléphone : les colonnes se partagent toute la largeur */
 .liste-ressources {
     display: grid;
     grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
@@ -300,6 +306,28 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
     margin: 0;
     padding: 0;
     list-style: none;
+}
+
+/* Ordinateur : la largeur d'une preview est calculée pour que --lignes-visibles
+   lignes entières tiennent sous l'en-tête, puis la grille est centrée.
+   Calcul : hauteur disponible pour une ligne = (écran − en-tête) / lignes − écart ;
+   on enlève le bloc texte ; il reste l'image, dont la largeur = hauteur × 3/4.
+   --hauteur-entete est mesurée par ressources.js (elle changera avec les filtres). */
+@media (min-width: 768px) {
+    .liste-ressources {
+        --largeur-carte: clamp(
+            var(--largeur-min-carte),
+            ((100dvh - var(--hauteur-entete, 200px)) / var(--lignes-visibles) - var(--ecart-grille) - var(--hauteur-infos)) * 3 / 4,
+            var(--largeur-max-carte)
+        );
+        grid-template-columns: repeat(var(--colonnes), minmax(0, var(--largeur-carte)));
+        justify-content: center;
+    }
+
+    .preview-infos {
+        height: var(--hauteur-infos);   /* hauteur fixe : le calcul ci-dessus reste juste */
+        overflow: hidden;
+    }
 }
 
 /* ---------- Une preview : image 3:4, puis titre, nature, pôles, date ---------- */
@@ -333,6 +361,7 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
     display: block;
     aspect-ratio: 3 / 4;
     background: var(--couleur-neutre);
+    container-type: inline-size;      /* 1cqi = 1 % de la largeur de la carte (taille du titre de remplacement) */
 }
 
 .preview-visuel img {
@@ -342,28 +371,32 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
     object-fit: cover;                /* une image d'un autre format est recadrée, pas déformée */
 }
 
-/* Image de remplacement : aplat grainé de la couleur de la nature, avec le titre */
+/* Image de remplacement : aplat de la couleur de la nature, avec le titre */
 .preview-remplacement {
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 12%;
-    isolation: isolate;
+    padding: 10%;
+    overflow: hidden;
     background: var(--couleur-neutre);
     color: var(--couleur-texte);
     font-size: var(--taille-remplacement);
     font-weight: 800;
     line-height: 1.15;
     text-align: center;
+    hyphens: auto;                    /* coupe les mots longs avec un tiret (la page est en français) */
     overflow-wrap: anywhere;
 }
 
-.preview-remplacement::before {
-    z-index: -1;
-    filter: contrast(0.8);
-    mix-blend-mode: hard-light;
+/* Titre trop long : 6 lignes au maximum, puis « … » */
+.preview-remplacement-titre {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    line-clamp: 6;
+    overflow: hidden;
 }
 
 /* Une couleur par nature ; nature inconnue = --couleur-neutre ci-dessus */
@@ -374,17 +407,26 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
 .nature-presse       .preview-remplacement { background: var(--couleur-presse); }
 .nature-analyse      .preview-remplacement { background: var(--couleur-analyse); }
 
-/* Repère « Épinglé », en haut à gauche de l'image */
+/* Repère « épinglé » : une punaise dans un rond, en haut à gauche de l'image.
+   Le mot « Épinglé » est lu par les lecteurs d'écran (visuellement-masque). */
 .preview-epingle {
     position: absolute;
     top: var(--espace);
     left: var(--espace);
-    padding: 3px 10px;
-    border-radius: var(--rayon-bouton);
+    display: grid;
+    place-items: center;
+    width: var(--taille-punaise);
+    height: var(--taille-punaise);
+    border-radius: 50%;
     background: var(--couleur-epingle);
-    color: var(--couleur-texte-epingle);
-    font-size: var(--taille-infos-carte);
-    font-weight: 700;
+    color: var(--couleur-punaise);
+}
+
+.preview-epingle svg {
+    width: 62%;
+    height: 62%;
+    fill: currentColor;
+    transform: rotate(35deg);         /* punaise penchée, comme plantée */
 }
 
 /* Le bloc texte sous l'image */
@@ -397,12 +439,27 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
     font-size: var(--taille-infos-carte);
 }
 
+/* Titre : 2 lignes au maximum, puis « … » */
 .preview-titre {
-    margin: 0 0 4px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    flex: none;
+    margin: 0 0 2px;
     font-size: var(--taille-titre-carte);
     font-weight: 800;
     line-height: 1.2;
     overflow-wrap: anywhere;
+}
+
+/* Nature et pôles : une ligne chacun, puis « … » */
+.preview-nature,
+.preview-poles {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .preview-nature {

@@ -16,9 +16,9 @@
     --couleur-retour: #f5f9a3;        /* lien « Toutes les ressources », sur le bleu */
     --couleur-filet: rgb(43 26 31 / 25%);
 
-    /* Grain du fond (comme le disque bleu de l'accueil) */
-    --grain-fond-melange: overlay;
-    --grain-fond-intensite: 2.1;
+    /* Grain du fond (léger, mêmes réglages que le fond de l'agenda et de la liste) */
+    --grain-fond-melange: hard-light;
+    --grain-fond-intensite: 0.2;
 
     /* ---------- Typographie ---------- */
     --police: 'raleway', system-ui, sans-serif;
