@@ -1,10 +1,11 @@
 ---
-titre: Communiqué de presse
+titre: Communiqué de presse 2 novembre
 date_publication: 2026-11-02
 nature: presse
 poles:
   - communication
   - section-pilote
+image: /fr/ressources/fichiers/communique-presse-autogestion-2310-reduit.jpg
 epingle: false
 sous_titre: "ENSA-PB : De l'occupation au laboratoire d'autogestion"
 pdf: /fr/ressources/fichiers/communique-presse-autogestion-2310-reduit.pdf
