@@ -38,7 +38,7 @@
     --couleur-separateur: rgb(145 58 78 / 20%);      /* séparation entre colonnes de jours */
 
     /* Cartes, par type – à caler sur la maquette */
-    --couleur-reunion: #972626;       /* rose clair */
+    --couleur-reunion: #ff4d4d;       /* rose clair */
     --couleur-atelier: #ffd9a1;       /* jaune */
     --couleur-manif: #f79cea;         /* rouge rosé */
     --couleur-formation: #fff9c0;     /* bleu-gris */
