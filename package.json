@@ -1,0 +1,13 @@
+{
+  "name": "belleville-autogeree",
+  "private": true,
+  "description": "Site de la mobilisation de l'ENSA Paris-Belleville",
+  "type": "module",
+  "scripts": {
+    "construire": "eleventy",
+    "local": "eleventy --serve"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "3.1.8"
+  }
+}

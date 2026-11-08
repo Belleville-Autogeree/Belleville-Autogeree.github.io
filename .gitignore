@@ -1,0 +1,5 @@
+# Outils installés par « npm install » : jamais dans le dépôt (trop lourd, se réinstalle)
+node_modules/
+
+# Site construit par Eleventy : fabriqué à chaque publication, jamais dans le dépôt
+_site/
