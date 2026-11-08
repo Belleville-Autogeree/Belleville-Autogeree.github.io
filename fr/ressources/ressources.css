@@ -1,0 +1,468 @@
+/* ==========================================================
+   RESSOURCES – styles de la page liste
+   Tout ce qui se règle (couleurs, tailles, espacements) est
+   dans :root juste en dessous. Retouche le design ici.
+   ========================================================== */
+
+:root {
+    /* ---------- Couleurs ---------- */
+    --couleur-fond: #527ab5;          /* le bleu du disque de l'accueil */
+    --couleur-texte: #2b1a1f;         /* texte des previews */
+    --couleur-jaune: #f5f9a3;         /* le jaune du site */
+    --couleur-bordeaux: #913a4e;      /* le rouge du site : accents, filtres sélectionnés */
+    --couleur-texte-sur-fond: #f5f9a3;     /* textes posés directement sur le bleu (compteur, messages) */
+
+    /* Grain du fond (comme le disque bleu de l'accueil) */
+    --grain-fond-melange: overlay;
+    --grain-fond-intensite: 2.1;
+
+    /* Disque Calendrier (jaune, devant) */
+    --couleur-calendrier: #f5f9a3;
+    --couleur-texte-calendrier: #527ab5;  /* bleu sur jaune, comme sur l'accueil */
+    --grain-calendrier-melange: hard-light;
+    --grain-calendrier-intensite: 0.8;
+
+    /* Anneau Accueil (bordeaux, derrière le jaune) */
+    --couleur-accueil: #913a4e;
+    --couleur-texte-accueil: #f5f9a3;
+    --grain-accueil-melange: overlay;
+    --grain-accueil-intensite: 2.1;
+
+    /* Previews */
+    --couleur-carte: #f5f9a3;         /* fond du bloc texte sous l'image */
+    --couleur-nature: #913a4e;        /* « Compte rendu », « Manifeste »… */
+    --couleur-epingle: #2b1a1f;       /* repère « Épinglé » : sombre, lisible sur toutes les images */
+    --couleur-texte-epingle: #f5f9a3;
+    --couleur-focus: #f5f9a3;         /* contour au clavier, sur le bleu */
+
+    /* Image de remplacement (document sans image), une couleur par nature – à caler à l'étape 8 */
+    --couleur-compte-rendu: #ffd9a1;
+    --couleur-manifeste: #f79cea;
+    --couleur-organisation: #1fafdb;
+    --couleur-evenement: #ba89ff;
+    --couleur-presse: #cfadff;
+    --couleur-analyse: #fff9c0;
+    --couleur-neutre: #fff4e9;        /* nature inconnue */
+
+    /* ---------- Typographie ---------- */
+    --police: 'raleway', system-ui, sans-serif;
+    --taille-texte: 1rem;
+    --taille-titre-carte: 1.05rem;
+    --taille-infos-carte: 0.8rem;     /* nature, pôles, date */
+    --taille-remplacement: clamp(1.1rem, 2.4vw, 1.8rem); /* titre écrit dans l'image de remplacement */
+
+    /* ---------- Grille des previews ---------- */
+    --colonnes: 3;                    /* par ligne sur ordinateur (2 sur téléphone, plus bas) */
+    --ecart-grille: 20px;
+    --largeur-max-liste: 1200px;
+    --rayon-carte: 0;                 /* coins des previews (0 = carrés, comme les popups de l'agenda) */
+    --marge-interne-carte: 10px 12px 12px;
+
+    /* ---------- Bouton « Voir plus » (rectangle à bords arrondis, comme les filtres) ---------- */
+    --rayon-bouton: 10px;
+
+    /* ---------- Disques Calendrier (jaune) et Accueil (bordeaux) ---------- */
+    /* Le bordeaux a le même centre que le jaune, en plus grand : il forme un anneau autour. */
+    --diametre-calendrier: clamp(120px, 11.5vw, 200px); /* diamètre du jaune */
+    --debord-calendrier: 0.25;        /* part du disque jaune qui sort de l'écran (en haut et à droite) */
+    --rapport-accueil: 1.45;          /* diamètre du bordeaux = 1,45 x celui du jaune */
+    --taille-texte-calendrier: 15px;  /* « Calendrier », en unités du jaune (diamètre = 100) */
+    --taille-texte-accueil: 11px;     /* « Accueil », en unités du bordeaux (diamètre = 100) */
+    --duree-agrandissement: .8s;
+
+    /* ---------- Espacements ---------- */
+    --marge-page: 16px;
+    --espace: 8px;
+}
+
+/* Sur téléphone : 2 previews par ligne, disques plus petits */
+@media (max-width: 767px) {
+    :root {
+        --colonnes: 2;
+        --ecart-grille: 12px;
+        --diametre-calendrier: 108px;
+        --taille-titre-carte: 0.95rem;
+        --marge-interne-carte: 8px 8px 10px;
+    }
+}
+
+/* ---------- Polices ---------- */
+@font-face {
+    font-family: 'raleway';
+    src: url('../../generalitems/fonts/Raleway-Regular.ttf');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'raleway';
+    src: url('../../generalitems/fonts/Raleway-Bold.ttf');
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'raleway';
+    src: url('../../generalitems/fonts/Raleway-ExtraBold.ttf');
+    font-weight: 800;
+    font-display: swap;
+}
+
+/* ---------- Page ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    /* place prise par les disques, à droite et en haut (le bordeaux dépasse plus loin que le jaune) */
+    --place-cercle: calc(var(--diametre-calendrier) * (0.5 - var(--debord-calendrier) + var(--rapport-accueil) / 2) + var(--espace));
+    position: relative;               /* repère des disques */
+    margin: 0;
+    min-height: 100vh;
+    background: var(--couleur-fond);
+    color: var(--couleur-texte-sur-fond);
+    font-family: var(--police);
+    font-size: var(--taille-texte);
+}
+
+/* ---------- Fond bleu grainé ----------
+   Une couleur, et par-dessus un calque de bruit gris
+   (--grain-image, fourni par grain.css) fusionné. */
+.fond-grain {
+    position: fixed;                  /* ne défile pas : le grain reste immobile */
+    inset: 0;
+    z-index: -1;
+    isolation: isolate;
+    background-color: var(--couleur-fond);
+    pointer-events: none;
+}
+
+.fond-grain::before,
+.cercle-calendrier::before,
+.cercle-accueil::before,
+.preview-remplacement::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain-image);
+    background-size: var(--grain-tile);
+    image-rendering: var(--grain-rendering);
+}
+
+.fond-grain::before {
+    filter: contrast(var(--grain-fond-intensite));
+    mix-blend-mode: var(--grain-fond-melange);
+}
+
+/* ==========================================================
+   Disques (code repris de la page agenda)
+   Une boîte immobile, découpée en rond par clip-path. Au
+   survol du lien, seul le rayon du découpage grandit (le
+   grain ne bouge pas).
+   ========================================================== */
+
+/* ---------- Disque Calendrier, jaune, en haut à droite ---------- */
+.cercle-calendrier {
+    --d: var(--diametre-calendrier);
+    --r: calc(var(--d) / 2);
+    --centre: calc(var(--d) * (0.5 - var(--debord-calendrier))); /* distance du centre aux bords haut et droit */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;                      /* au-dessus de la page */
+    isolation: isolate;
+    background-color: var(--couleur-calendrier);
+    clip-path: circle(var(--r) at calc(100% - var(--centre)) var(--centre));
+    transition: clip-path var(--duree-agrandissement) ease;
+    pointer-events: none;
+}
+
+.cercle-calendrier::before {
+    filter: contrast(var(--grain-calendrier-intensite));
+    mix-blend-mode: var(--grain-calendrier-melange);
+}
+
+/* rayon 150vmax : couvre tout l'écran */
+body:has(.lien-calendrier:hover) .cercle-calendrier,
+body:has(.lien-calendrier:focus-visible) .cercle-calendrier {
+    --r: 150vmax;
+}
+
+/* Le calque du lien : un carré de la taille du disque, à la même place */
+.calque-calendrier {
+    position: absolute;
+    top: calc(var(--diametre-calendrier) * var(--debord-calendrier) * -1);
+    right: calc(var(--diametre-calendrier) * var(--debord-calendrier) * -1);
+    width: var(--diametre-calendrier);
+    height: var(--diametre-calendrier);
+    z-index: 11;                      /* au-dessus du disque, même agrandi */
+    overflow: visible;
+}
+
+.lien-calendrier text {
+    font-family: var(--police);
+    font-weight: 700;
+    font-size: var(--taille-texte-calendrier);
+    fill: var(--couleur-texte-calendrier);
+    text-anchor: middle;              /* startOffset = centre du texte */
+}
+
+.lien-calendrier:focus-visible {
+    outline: none;                    /* le disque qui s'agrandit sert d'indicateur */
+}
+
+/* ---------- Anneau Accueil, bordeaux, derrière le jaune ---------- */
+.cercle-accueil {
+    --d: calc(var(--diametre-calendrier) * var(--rapport-accueil));
+    --r: calc(var(--d) / 2);
+    --centre: calc(var(--diametre-calendrier) * (0.5 - var(--debord-calendrier))); /* = celui du jaune */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9;                       /* juste sous le jaune */
+    isolation: isolate;
+    background-color: var(--couleur-accueil);
+    clip-path: circle(var(--r) at calc(100% - var(--centre)) var(--centre));
+    transition: clip-path var(--duree-agrandissement) ease;
+    pointer-events: none;
+}
+
+.cercle-accueil::before {
+    filter: contrast(var(--grain-accueil-intensite));
+    mix-blend-mode: var(--grain-accueil-melange);
+}
+
+/* Agrandi, il reste sous le jaune */
+body:has(.lien-accueil:hover) .cercle-accueil,
+body:has(.lien-accueil:focus-visible) .cercle-accueil {
+    --r: 150vmax;
+}
+
+/* Calque du lien : un carré de la taille du bordeaux, centré au même endroit que le jaune */
+.calque-accueil {
+    --d: calc(var(--diametre-calendrier) * var(--rapport-accueil));
+    --centre: calc(var(--diametre-calendrier) * (0.5 - var(--debord-calendrier)));
+    position: absolute;
+    top: calc(var(--centre) - var(--d) / 2);
+    right: calc(var(--centre) - var(--d) / 2);
+    width: var(--d);
+    height: var(--d);
+    z-index: 11;
+    overflow: visible;
+}
+
+.lien-accueil text {
+    font-family: var(--police);
+    font-weight: 700;
+    font-size: var(--taille-texte-accueil);
+    fill: var(--couleur-texte-accueil);
+    text-anchor: middle;
+}
+
+.lien-accueil:focus-visible {
+    outline: none;
+}
+
+/* ==========================================================
+   En-tête : bandeaux de filtres (étape 6) et recherche (étape 7).
+   Il fait au moins la hauteur des disques, et laisse leur place
+   à droite : la grille commence en dessous.
+   ========================================================== */
+.ressources-entete {
+    min-height: var(--place-cercle);
+    padding: var(--marge-page) var(--place-cercle) var(--espace) var(--marge-page);
+}
+
+/* ==========================================================
+   Liste des previews
+   ========================================================== */
+.ressources {
+    max-width: var(--largeur-max-liste);
+    margin: 0 auto;
+    padding: 0 var(--marge-page) calc(var(--marge-page) * 3);
+}
+
+.ressources-message {
+    margin: 0 0 var(--marge-page);
+    font-weight: 700;
+}
+
+.liste-ressources {
+    display: grid;
+    grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
+    gap: var(--ecart-grille);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* ---------- Une preview : image 3:4, puis titre, nature, pôles, date ---------- */
+.preview-lien {
+    display: flex;
+    flex-direction: column;
+    height: 100%;                     /* toutes les cartes d'une ligne ont la même hauteur */
+    border-radius: var(--rayon-carte);
+    overflow: hidden;
+    background: var(--couleur-carte);
+    color: var(--couleur-texte);
+    text-decoration: none;
+}
+
+.preview-lien:hover .preview-visuel img {
+    filter: brightness(1.06);
+}
+
+.preview-lien:hover .preview-titre {
+    text-decoration: underline;
+}
+
+.preview-lien:focus-visible {
+    outline: 3px solid var(--couleur-focus);
+    outline-offset: 3px;
+}
+
+/* Le cadre de l'image : toujours au format 3:4 (publication Instagram 1080 × 1440) */
+.preview-visuel {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    background: var(--couleur-neutre);
+}
+
+.preview-visuel img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;                /* une image d'un autre format est recadrée, pas déformée */
+}
+
+/* Image de remplacement : aplat grainé de la couleur de la nature, avec le titre */
+.preview-remplacement {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12%;
+    isolation: isolate;
+    background: var(--couleur-neutre);
+    color: var(--couleur-texte);
+    font-size: var(--taille-remplacement);
+    font-weight: 800;
+    line-height: 1.15;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.preview-remplacement::before {
+    z-index: -1;
+    filter: contrast(0.8);
+    mix-blend-mode: hard-light;
+}
+
+/* Une couleur par nature ; nature inconnue = --couleur-neutre ci-dessus */
+.nature-compte-rendu .preview-remplacement { background: var(--couleur-compte-rendu); }
+.nature-manifeste    .preview-remplacement { background: var(--couleur-manifeste); }
+.nature-organisation .preview-remplacement { background: var(--couleur-organisation); }
+.nature-evenement    .preview-remplacement { background: var(--couleur-evenement); }
+.nature-presse       .preview-remplacement { background: var(--couleur-presse); }
+.nature-analyse      .preview-remplacement { background: var(--couleur-analyse); }
+
+/* Repère « Épinglé », en haut à gauche de l'image */
+.preview-epingle {
+    position: absolute;
+    top: var(--espace);
+    left: var(--espace);
+    padding: 3px 10px;
+    border-radius: var(--rayon-bouton);
+    background: var(--couleur-epingle);
+    color: var(--couleur-texte-epingle);
+    font-size: var(--taille-infos-carte);
+    font-weight: 700;
+}
+
+/* Le bloc texte sous l'image */
+.preview-infos {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    padding: var(--marge-interne-carte);
+    font-size: var(--taille-infos-carte);
+}
+
+.preview-titre {
+    margin: 0 0 4px;
+    font-size: var(--taille-titre-carte);
+    font-weight: 800;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.preview-nature {
+    color: var(--couleur-nature);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.preview-date {
+    margin-top: auto;                 /* la date tout en bas de la carte */
+    padding-top: 4px;
+}
+
+/* ---------- Sous la liste : compteur et « Voir plus » ---------- */
+.ressources-pied {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--espace);
+    margin-top: calc(var(--marge-page) * 2);
+}
+
+.ressources-compteur {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.bouton-voir-plus {
+    padding: 10px 28px;
+    border: none;
+    border-radius: var(--rayon-bouton);
+    background: var(--couleur-bordeaux);
+    color: var(--couleur-jaune);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.bouton-voir-plus:hover {
+    filter: brightness(1.15);
+}
+
+.bouton-voir-plus:focus-visible {
+    outline: 3px solid var(--couleur-focus);
+    outline-offset: 3px;
+}
+
+.bouton-voir-plus[hidden] {
+    display: none;
+}
+
+/* Caché à l'écran, mais lu par les lecteurs d'écran */
+.visuellement-masque {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}

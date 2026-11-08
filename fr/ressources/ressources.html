@@ -3,9 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Ressources – Mobilisation ENSA Paris-Belleville</title>
+
+    <!-- grain.css fournit la texture de bruit (--grain-image), partagée avec l'accueil et l'agenda -->
+    <link rel="stylesheet" href="../grain.css">
+    <link rel="stylesheet" href="ressources.css">
+    <script src="../grain.js" defer></script>
+    <!-- defer : le script s'exécute une fois le HTML lu, il trouve donc tous les éléments -->
+    <script src="ressources.js" defer></script>
 </head>
 <body>
-    
+    <!-- Fond bleu grainé, fixe derrière toute la page -->
+    <div class="fond-grain" aria-hidden="true"></div>
+
+    <!-- ==========================================================
+         Les deux disques, en haut à droite (même code que la page agenda) :
+         - anneau bordeaux « Accueil », derrière ;
+         - disque jaune « Calendrier », devant, même centre, plus petit.
+         Chaque disque grossit au survol de son lien ; les liens sont
+         dans des calques à part pour ne pas bouger.
+         ========================================================== -->
+    <div class="cercle-accueil" aria-hidden="true"></div>
+    <svg class="calque-accueil" viewBox="0 0 100 100">
+        <defs>
+            <!-- tracé : centre (50,50), rayon 47, tout près du bord du bordeaux, pour rester dans l'anneau.
+                 Il part du haut et tourne par la gauche : 25% = gauche, 37.5% = bas-gauche, 50% = bas.
+                 Si un mot est coupé par le bord de l'écran, ajuste startOffset. -->
+            <path id="arc-accueil" d="M 50,3 A 47,47 0 1,0 50,97 A 47,47 0 1,0 50,3"/>
+        </defs>
+        <a class="lien-accueil" href="../home.html">
+            <text><textPath id="texte-accueil" href="#arc-accueil" startOffset="37.5%"></textPath></text>
+        </a>
+    </svg>
+
+    <div class="cercle-calendrier" aria-hidden="true"></div>
+    <svg class="calque-calendrier" viewBox="0 0 100 100">
+        <defs>
+            <!-- tracé : centre (50,50), rayon 44. Il part du HAUT du cercle et tourne par la gauche :
+                 0% = haut, 25% = gauche, 37.5% = bas-gauche, 50% = bas. -->
+            <path id="arc-calendrier" d="M 50,6 A 44,44 0 1,0 50,94 A 44,44 0 1,0 50,6"/>
+        </defs>
+        <!-- même adresse que le lien Calendrier de l'accueil -->
+        <a class="lien-calendrier" href="../calendar/agenda.html">
+            <text><textPath id="texte-calendrier" href="#arc-calendrier" startOffset="37.5%"></textPath></text>
+        </a>
+    </svg>
+
+    <!-- Titre de la page, pour les lecteurs d'écran -->
+    <h1 class="visuellement-masque" id="titre-page"></h1>
+
+    <!-- En haut : les bandeaux de filtres (étape 6) et la recherche (étape 7).
+         Il laisse à droite la place des disques. -->
+    <header class="ressources-entete" id="ressources-entete"></header>
+
+    <main class="ressources">
+        <!-- Message (chargement impossible, aucun document…), caché tant qu'il n'y a rien à dire -->
+        <p class="ressources-message" id="ressources-message" role="status" hidden></p>
+
+        <!-- Les previews, ajoutées par ressources.js -->
+        <ul class="liste-ressources" id="liste-ressources"></ul>
+
+        <!-- Sous la liste : combien sont affichés, et le bouton pour en voir plus -->
+        <div class="ressources-pied">
+            <p class="ressources-compteur" id="ressources-compteur" aria-live="polite"></p>
+            <button type="button" class="bouton-voir-plus" id="bouton-voir-plus" hidden></button>
+        </div>
+    </main>
 </body>
 </html>
