@@ -1,0 +1,297 @@
+/* ==========================================================
+   À PROPOS – styles
+   Tout ce qui se règle (couleurs, tailles, espacements) est
+   dans :root juste en dessous. Retouche le design ici.
+   ========================================================== */
+
+:root {
+    /* ---------- Couleurs ---------- */
+    --couleur-fond: #000000;          /* fond de la page : noir */
+    --couleur-texte: #f5f9a3;         /* texte : le jaune clair du site (lisible sur le noir) */
+    --couleur-lien: #f0bccb;          /* liens (cliqués ou non) : un bordeaux très clair,
+                                         de la même teinte que le bordeaux du site #913a4e */
+
+    /* Grain du fond (même principe que l'agenda et les ressources).
+       Sur du noir, seul hard-light (Lumière crue) montre le grain :
+       overlay et soft-light multiplient par le noir et n'affichent rien. */
+    --grain-fond-melange: hard-light; /* mode de fusion (Lumière crue) */
+    --grain-fond-intensite: 0.4;      /* contraste du bruit ; 0 = pas de grain, plus haut = grain plus visible.
+                                         (0.2 comme l'agenda ne se voit presque pas sur le noir) */
+
+    /* ---------- Typographie ---------- */
+    --police: 'raleway', system-ui, sans-serif;
+    --taille-texte: 1rem;
+
+    /* ---------- Espacements ---------- */
+    --marge-page: 16px;
+
+    /* ---------- Disque Accueil (bordeaux, en haut à droite) ----------
+       Mêmes réglages que les disques des pages agenda et ressources. */
+    --couleur-accueil: #913a4e;
+    --couleur-texte-accueil: #f5f9a3;
+    --grain-accueil-melange: overlay;
+    --grain-accueil-intensite: 2.1;
+    --diametre-accueil: clamp(120px, 11.5vw, 200px);
+    --debord-accueil: 0.25;           /* part du disque qui sort de l'écran (en haut et à droite).
+                                         Plus grand = « Accueil » risque d'être coupé par le bord. */
+    --taille-texte-accueil: 15px;     /* « Accueil », en unités du disque (diamètre = 100) */
+    --duree-agrandissement: .8s;
+
+    /* Place prise par le disque à droite de l'écran (+ un petit espace) :
+       sur ordinateur, le lecteur PDF s'arrête juste à gauche. */
+    --place-disque: calc(var(--diametre-accueil) * (1 - var(--debord-accueil)) + 8px);
+
+    /* ---------- Communiqué de presse (PDF) ---------- */
+    --ecart-colonnes: clamp(24px, 4vw, 64px); /* ordinateur : entre le texte et le PDF */
+    --a4-largeur: 210;                /* format du lecteur sur ordinateur : A4 portrait */
+    --a4-hauteur: 297;
+    --largeur-max-lecteur: 50vw;      /* sur un écran étroit, le lecteur ne prend pas plus de la moitié */
+    --marge-bouton: 12px;             /* marge du bouton, en haut et en bas */
+    --ligne-bouton: 20px;             /* hauteur d'une ligne de texte du bouton */
+    /* Largeur du lecteur sur ordinateur : la plus grande qui laisse voir dans l'écran
+       toute la hauteur de la feuille A4, plus le bouton en dessous. */
+    --largeur-lecteur: min(
+        calc((100vh - 2 * var(--marge-page) - 2 * var(--marge-bouton) - var(--ligne-bouton) - var(--marge-page) / 2)
+            * var(--a4-largeur) / var(--a4-hauteur)),
+        var(--largeur-max-lecteur));
+    --hauteur-lecteur-une-colonne: 85vh;      /* lecteur affiché sous le texte (fenêtre étroite) */
+    --rayon-pdf: 12px;                /* coins arrondis, comme les previews et les cartes du calendrier */
+    --couleur-bouton: #913a4e;        /* bouton « Ouvrir le communiqué » : bordeaux */
+    --couleur-texte-bouton: #f5f9a3;
+    --rayon-bouton: 8px;              /* comme les boutons des pages ressources */
+    --contour-survol: 2px;            /* contour intérieur du bouton au survol */
+}
+
+/* Sur téléphone : disque plus petit (comme sur les pages ressources) */
+@media (max-width: 767px) {
+    :root {
+        --diametre-accueil: 108px;
+    }
+}
+
+/* ---------- Polices ---------- */
+@font-face {
+    font-family: 'supernotoriousdot';
+    src: url('../../generalitems/fonts/supernotoriousdot.woff2');
+    font-weight: 300;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'raleway';
+    src: url('../../generalitems/fonts/Raleway-Regular.ttf');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'raleway-bold';
+    src: url('../../generalitems/fonts/Raleway-Bold.ttf');
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* ---------- Page ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: var(--marge-page);
+    min-height: 100vh;
+    background: var(--couleur-fond);  /* au cas où le calque de grain ne s'afficherait pas */
+    color: var(--couleur-texte);
+    font-family: var(--police);
+    font-size: var(--taille-texte);
+}
+
+/* ---------- Fond noir grainé ----------
+   Même principe que les cercles de l'accueil : une couleur, et par-dessus
+   un calque de bruit gris (--grain-image, fourni par grain.css) fusionné. */
+.fond-grain {
+    position: fixed;                  /* ne défile pas : le grain reste immobile */
+    inset: 0;
+    z-index: -1;                      /* derrière tout le contenu */
+    isolation: isolate;               /* le bruit ne se mélange qu'avec le noir */
+    background-color: var(--couleur-fond);
+    pointer-events: none;
+}
+
+.fond-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain-image);
+    background-size: var(--grain-tile);
+    image-rendering: var(--grain-rendering);
+    filter: contrast(var(--grain-fond-intensite));
+    mix-blend-mode: var(--grain-fond-melange);
+}
+/* ---------- Disque Accueil, bordeaux, en haut à droite ----------
+   Comme sur les autres pages : une boîte immobile, découpée en rond par clip-path.
+   Au survol du lien, seul le rayon du découpage grandit (le grain ne bouge pas). */
+.cercle-accueil {
+    --d: var(--diametre-accueil);
+    --r: calc(var(--d) / 2);
+    --centre: calc(var(--d) * (0.5 - var(--debord-accueil))); /* distance du centre aux bords haut et droit */
+    position: fixed;                  /* reste en haut à droite quand la page défile */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;                      /* au-dessus de la page */
+    isolation: isolate;               /* le grain ne se mélange qu'avec le bordeaux */
+    background-color: var(--couleur-accueil);
+    clip-path: circle(var(--r) at calc(100% - var(--centre)) var(--centre));
+    transition: clip-path var(--duree-agrandissement) ease;
+    pointer-events: none;
+}
+
+/* Le grain du disque */
+.cercle-accueil::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain-image);
+    background-size: var(--grain-tile);
+    image-rendering: var(--grain-rendering);
+    filter: contrast(var(--grain-accueil-intensite));
+    mix-blend-mode: var(--grain-accueil-melange);
+}
+
+/* Au survol : rayon 150vmax, le bordeaux couvre tout l'écran */
+body:has(.lien-accueil:hover) .cercle-accueil,
+body:has(.lien-accueil:focus-visible) .cercle-accueil {
+    --r: 150vmax;
+}
+
+/* Le calque du lien : un carré de la taille du disque, à la même place */
+.calque-accueil {
+    position: fixed;
+    top: calc(var(--diametre-accueil) * var(--debord-accueil) * -1);
+    right: calc(var(--diametre-accueil) * var(--debord-accueil) * -1);
+    width: var(--diametre-accueil);
+    height: var(--diametre-accueil);
+    z-index: 11;                      /* au-dessus du disque, même agrandi */
+    overflow: visible;
+}
+
+.lien-accueil text {
+    font-family: 'raleway-bold', var(--police);
+    font-size: var(--taille-texte-accueil);
+    fill: var(--couleur-texte-accueil);
+    text-anchor: middle;              /* startOffset = centre du texte */
+}
+
+.lien-accueil:focus-visible {
+    outline: none;                    /* le disque qui s'agrandit sert d'indicateur */
+}
+
+/* ---------- Mise en page : texte, puis communiqué ----------
+   Téléphone : une colonne, le PDF sous le texte.
+   Ordinateur : deux colonnes, le PDF (format A4) à droite, à gauche du disque. */
+.apropos-pdf {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(var(--marge-page) / 2);
+    margin-top: calc(var(--marge-page) * 2);
+}
+
+.pdf-lecteur {
+    display: block;
+    width: 100%;
+    height: var(--hauteur-lecteur-une-colonne);
+    border: none;
+    border-radius: var(--rayon-pdf);
+    background: #fff;
+}
+
+.pdf-lecteur[hidden] {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    /* padding-right : le texte et le PDF restent à gauche du disque Accueil */
+    .apropos {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) var(--largeur-lecteur);
+        column-gap: var(--ecart-colonnes);
+        align-items: start;
+        padding-right: calc(var(--place-disque) - var(--marge-page));
+    }
+
+    /* Le PDF commence en haut de la page.
+       sticky : si le texte de gauche devient long, le PDF reste en place. */
+    .apropos-pdf {
+        position: sticky;
+        top: var(--marge-page);
+        margin-top: 0;
+    }
+
+    /* Lecteur au format A4 : sa largeur est celle de la colonne, sa hauteur en découle */
+    .apropos-pdf .pdf-lecteur {
+        height: auto;
+        aspect-ratio: var(--a4-largeur) / var(--a4-hauteur);
+    }
+}
+
+/* Bouton « Ouvrir le communiqué de presse (PDF) » (comme les boutons des pages ressources) */
+.pdf-bouton {
+    display: inline-block;
+    padding: var(--marge-bouton) 22px;
+    line-height: var(--ligne-bouton);
+    border-radius: var(--rayon-bouton);
+    background: var(--couleur-bouton);
+    font-family: 'raleway-bold', var(--police);
+    text-decoration: none;
+}
+
+.pdf-bouton:link,
+.pdf-bouton:visited {
+    color: var(--couleur-texte-bouton);
+}
+
+/* Survol : un contour clair à l'intérieur, plutôt qu'un changement de couleur */
+.pdf-bouton:hover {
+    box-shadow: inset 0 0 0 var(--contour-survol) var(--couleur-texte-bouton);
+}
+
+.pdf-bouton:focus-visible {
+    outline: 3px solid var(--couleur-texte-bouton);
+    outline-offset: 3px;
+}
+
+/* Caché à l'écran, mais lu par les lecteurs d'écran */
+.visuellement-masque {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* ---------- Liens ----------
+   :link = pas encore cliqué, :visited = déjà cliqué.
+   Même couleur pour les deux (sinon le navigateur met du violet aux liens visités). */
+a:link,
+a:visited {
+    color: var(--couleur-lien);
+}
+
+/* ---------- Titres ---------- */
+h1{
+    font-family: 'supernotoriousdot' ;
+    font-size: 5VW;
+    font-weight: normal;
+}
+h2{
+    font-family: 'raleway-bold' ;
+    font-size: 3VW;
+    font-weight: normal;
+}

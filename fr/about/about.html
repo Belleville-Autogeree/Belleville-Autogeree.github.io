@@ -3,9 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>A propos</title>
+
+    <!-- grain.css fournit la texture de bruit (--grain-image), partagée avec les autres pages -->
+    <link rel="stylesheet" href="../grain.css">
+    <link rel="stylesheet" href="about.css">
+    <script src="../grain.js" defer></script>
+    <!-- about.js : affiche le lecteur PDF, seulement là où il fonctionne (ordinateur) -->
+    <script src="about.js" defer></script>
 </head>
 <body>
-    hihi
+    <!-- Fond noir grainé, fixe derrière toute la page -->
+    <div class="fond-grain" aria-hidden="true"></div>
+
+    <!-- Disque bordeaux « Accueil », en haut à droite (même principe que les disques
+         de l'agenda et des ressources, styles dans about.css).
+         Le disque grossit au survol ; le lien est dans un calque à part pour ne pas bouger. -->
+    <div class="cercle-accueil" aria-hidden="true"></div>
+    <svg class="calque-accueil" viewBox="0 0 100 100">
+        <defs>
+            <!-- tracé : centre (50,50), rayon 44. Il part du HAUT du cercle et tourne par la gauche :
+                 0% = haut, 25% = gauche, 37.5% = bas-gauche, 50% = bas.
+                 Si le mot est coupé par le bord de l'écran, ajuste startOffset. -->
+            <path id="arc-accueil" d="M 50,6 A 44,44 0 1,0 50,94 A 44,44 0 1,0 50,6"/>
+        </defs>
+        <!-- même adresse que le lien Accueil des autres pages -->
+        <a class="lien-accueil" href="../home.html">
+            <text><textPath href="#arc-accueil" startOffset="37.5%">Accueil</textPath></text>
+        </a>
+    </svg>
+
+    <!-- Ordinateur : texte à gauche, PDF à droite. Téléphone : le PDF sous le texte. -->
+    <main class="apropos">
+        <div class="infos">
+            <h1>A propos</h1>
+            <p>contactez nous par mail : <a href="mailto:mob2026ensapb@gmail.com">mob2026ensapb@gmail.com</a></p>
+            <p>Suivez-nous sur <a href="https://www.instagram.com/belleville_autogeree/" target="_blank">instagram Belleville_Autogeree</a> </p>
+            <p>ENSA Paris-Belleville, 60 Boulevard de la Villette, Paris 19</p>
+        </div>
+
+        <!-- Le communiqué de presse (PDF rangé dans fr/about/fichiers/).
+             Pour le remplacer : remplace le fichier en gardant le même nom.
+             - le lecteur intégré n'est affiché (par about.js) que sur ordinateur :
+               sur téléphone, les navigateurs l'affichent mal ou pas du tout ;
+             - le bouton marche partout : il ouvre le PDF dans un nouvel onglet. -->
+        <section class="apropos-pdf" aria-label="Communiqué de presse">
+            <iframe class="pdf-lecteur" data-src="fichiers/communique-de-presse.pdf#view=FitH" title="Communiqué de presse (PDF)" hidden></iframe>
+            <a class="pdf-bouton" href="fichiers/communique-de-presse.pdf" target="_blank" rel="noopener">Ouvrir le communiqué de presse (PDF)<span class="visuellement-masque"> (s'ouvre dans un nouvel onglet)</span></a>
+        </section>
+    </main>
 </body>
 </html>

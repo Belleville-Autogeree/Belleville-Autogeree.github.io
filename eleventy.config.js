@@ -44,6 +44,9 @@ export default function (eleventyConfig) {
     // versions réduites et les PDF des documents publiés sont mis en ligne.)
     eleventyConfig.addPassthroughCopy("fr/**/*.{html,css,js,json}");
 
+    // Les fichiers de la page À propos (le communiqué de presse en PDF)
+    eleventyConfig.addPassthroughCopy("fr/about/fichiers");
+
     /* ----------------------------------------------------------
        2. CE QU'ELEVENTY NE DOIT PAS PUBLIER
        (node_modules/ et _site/ sont déjà ignorés d'office)
