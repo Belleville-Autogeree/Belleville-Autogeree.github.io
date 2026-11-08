@@ -1,0 +1,168 @@
+/* ==========================================================
+   DISQUES « Calendrier » et « Accueil », en haut à droite
+   Partagé par la page liste (ressources.html) et les pages
+   de document. Code repris de la page agenda, avec une
+   différence : position: fixed, les disques restent en haut
+   à droite de l'écran quand la page défile.
+
+   Principe : une boîte immobile, découpée en rond par
+   clip-path. Au survol du lien, seul le rayon du découpage
+   grandit (le grain ne bouge pas).
+   - disque jaune « Calendrier », devant ;
+   - anneau bordeaux « Accueil », derrière, même centre, plus grand.
+
+   À charger après grain.css (qui fournit --grain-image).
+   La page doit définir --police.
+   ========================================================== */
+
+:root {
+    /* Disque Calendrier (jaune, devant) */
+    --couleur-calendrier: #f5f9a3;
+    --couleur-texte-calendrier: #527ab5;  /* bleu sur jaune, comme sur l'accueil */
+    --grain-calendrier-melange: hard-light;
+    --grain-calendrier-intensite: 0.8;
+
+    /* Anneau Accueil (bordeaux, derrière le jaune) */
+    --couleur-accueil: #913a4e;
+    --couleur-texte-accueil: #f5f9a3;
+    --grain-accueil-melange: overlay;
+    --grain-accueil-intensite: 2.1;
+
+    /* Tailles. Le bordeaux a le même centre que le jaune, en plus grand : il forme un anneau autour. */
+    --diametre-calendrier: clamp(120px, 11.5vw, 200px); /* diamètre du jaune */
+    --debord-calendrier: 0.25;        /* part du disque jaune qui sort de l'écran (en haut et à droite) */
+    --rapport-accueil: 1.45;          /* diamètre du bordeaux = 1,45 x celui du jaune */
+    --taille-texte-calendrier: 15px;  /* « Calendrier », en unités du jaune (diamètre = 100) */
+    --taille-texte-accueil: 11px;     /* « Accueil », en unités du bordeaux (diamètre = 100) */
+    --duree-agrandissement: .8s;
+}
+
+/* Sur téléphone : disques plus petits */
+@media (max-width: 767px) {
+    :root {
+        --diametre-calendrier: 108px;
+    }
+}
+
+/* Place prise par les disques, à droite et en haut (le bordeaux dépasse plus loin que le jaune).
+   La page s'en sert pour ne rien mettre dessous. */
+body {
+    --place-cercle: calc(var(--diametre-calendrier) * (0.5 - var(--debord-calendrier) + var(--rapport-accueil) / 2) + var(--espace, 8px));
+}
+
+/* Le grain des disques */
+.cercle-calendrier::before,
+.cercle-accueil::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain-image);
+    background-size: var(--grain-tile);
+    image-rendering: var(--grain-rendering);
+}
+
+/* ---------- Disque Calendrier, jaune, en haut à droite ---------- */
+.cercle-calendrier {
+    --d: var(--diametre-calendrier);
+    --r: calc(var(--d) / 2);
+    --centre: calc(var(--d) * (0.5 - var(--debord-calendrier))); /* distance du centre aux bords haut et droit */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;                      /* au-dessus de la page */
+    isolation: isolate;
+    background-color: var(--couleur-calendrier);
+    clip-path: circle(var(--r) at calc(100% - var(--centre)) var(--centre));
+    transition: clip-path var(--duree-agrandissement) ease;
+    pointer-events: none;
+}
+
+.cercle-calendrier::before {
+    filter: contrast(var(--grain-calendrier-intensite));
+    mix-blend-mode: var(--grain-calendrier-melange);
+}
+
+/* rayon 150vmax : couvre tout l'écran */
+body:has(.lien-calendrier:hover) .cercle-calendrier,
+body:has(.lien-calendrier:focus-visible) .cercle-calendrier {
+    --r: 150vmax;
+}
+
+/* Le calque du lien : un carré de la taille du disque, à la même place */
+.calque-calendrier {
+    position: fixed;
+    top: calc(var(--diametre-calendrier) * var(--debord-calendrier) * -1);
+    right: calc(var(--diametre-calendrier) * var(--debord-calendrier) * -1);
+    width: var(--diametre-calendrier);
+    height: var(--diametre-calendrier);
+    z-index: 11;                      /* au-dessus du disque, même agrandi */
+    overflow: visible;
+}
+
+.lien-calendrier text {
+    font-family: var(--police);
+    font-weight: 700;
+    font-size: var(--taille-texte-calendrier);
+    fill: var(--couleur-texte-calendrier);
+    text-anchor: middle;              /* startOffset = centre du texte */
+}
+
+.lien-calendrier:focus-visible {
+    outline: none;                    /* le disque qui s'agrandit sert d'indicateur */
+}
+
+/* ---------- Anneau Accueil, bordeaux, derrière le jaune ---------- */
+.cercle-accueil {
+    --d: calc(var(--diametre-calendrier) * var(--rapport-accueil));
+    --r: calc(var(--d) / 2);
+    --centre: calc(var(--diametre-calendrier) * (0.5 - var(--debord-calendrier))); /* = celui du jaune */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9;                       /* juste sous le jaune */
+    isolation: isolate;
+    background-color: var(--couleur-accueil);
+    clip-path: circle(var(--r) at calc(100% - var(--centre)) var(--centre));
+    transition: clip-path var(--duree-agrandissement) ease;
+    pointer-events: none;
+}
+
+.cercle-accueil::before {
+    filter: contrast(var(--grain-accueil-intensite));
+    mix-blend-mode: var(--grain-accueil-melange);
+}
+
+/* Agrandi, il reste sous le jaune */
+body:has(.lien-accueil:hover) .cercle-accueil,
+body:has(.lien-accueil:focus-visible) .cercle-accueil {
+    --r: 150vmax;
+}
+
+/* Calque du lien : un carré de la taille du bordeaux, centré au même endroit que le jaune */
+.calque-accueil {
+    --d: calc(var(--diametre-calendrier) * var(--rapport-accueil));
+    --centre: calc(var(--diametre-calendrier) * (0.5 - var(--debord-calendrier)));
+    position: fixed;
+    top: calc(var(--centre) - var(--d) / 2);
+    right: calc(var(--centre) - var(--d) / 2);
+    width: var(--d);
+    height: var(--d);
+    z-index: 11;
+    overflow: visible;
+}
+
+.lien-accueil text {
+    font-family: var(--police);
+    font-weight: 700;
+    font-size: var(--taille-texte-accueil);
+    fill: var(--couleur-texte-accueil);
+    text-anchor: middle;
+}
+
+.lien-accueil:focus-visible {
+    outline: none;
+}

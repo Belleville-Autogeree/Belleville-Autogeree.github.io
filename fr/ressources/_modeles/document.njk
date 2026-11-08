@@ -35,6 +35,7 @@
 
     <link rel="stylesheet" href="/fr/grain.css">
     <link rel="stylesheet" href="/fr/ressources/document.css">
+    <link rel="stylesheet" href="/fr/ressources/disques.css">
     <script src="/fr/grain.js" defer></script>
     {%- if r.format == "pdf" %}
     <script src="/fr/ressources/document.js" defer></script>
@@ -44,8 +45,34 @@
     <!-- Fond bleu grainé, fixe derrière toute la page -->
     <div class="fond-grain" aria-hidden="true"></div>
 
+    <!-- Les deux disques, en haut à droite : même HTML que ressources.html, styles dans disques.css -->
+    <div class="cercle-accueil" aria-hidden="true"></div>
+    <svg class="calque-accueil" viewBox="0 0 100 100">
+        <defs>
+            <path id="arc-accueil" d="M 50,3 A 47,47 0 1,0 50,97 A 47,47 0 1,0 50,3"/>
+        </defs>
+        <a class="lien-accueil" href="/fr/home.html">
+            <text><textPath href="#arc-accueil" startOffset="37.5%">{{ t.accueil }}</textPath></text>
+        </a>
+    </svg>
+
+    <div class="cercle-calendrier" aria-hidden="true"></div>
+    <svg class="calque-calendrier" viewBox="0 0 100 100">
+        <defs>
+            <path id="arc-calendrier" d="M 50,6 A 44,44 0 1,0 50,94 A 44,44 0 1,0 50,6"/>
+        </defs>
+        <a class="lien-calendrier" href="/fr/calendar/agenda.html">
+            <text><textPath href="#arc-calendrier" startOffset="37.5%">{{ t.calendrier }}</textPath></text>
+        </a>
+    </svg>
+
+    <!-- Retour à la liste : une grosse flèche faite de deux rectangles qui se croisent
+         à angle droit (dessinée en CSS, voir document.css) -->
     <nav class="doc-nav">
-        <a class="doc-retour" href="/fr/ressources/ressources.html"><span aria-hidden="true">←</span> {{ t.retour }}</a>
+        <a class="doc-retour" href="/fr/ressources/ressources.html" title="{{ t.retour }}">
+            <span class="fleche" aria-hidden="true"><span class="fleche-trait fleche-trait--1"></span><span class="fleche-trait fleche-trait--2"></span></span>
+            <span class="visuellement-masque">{{ t.retour }}</span>
+        </a>
     </nav>
 
     <main class="doc">
@@ -72,7 +99,7 @@
                 eleventy:ignore = déjà réduite par preparer.mjs, à ne pas retraiter. #}
             {%- if r.images and r.format != "pdf" %}
             <img class="doc-image" src="{{ r.images.page.src }}" srcset="{{ r.images.page.srcset }}"
-                 sizes="(min-width: 640px) 540px, 100vw"
+                 sizes="(min-width: 640px) 420px, 100vw"
                  width="{{ r.images.page.largeur }}" height="{{ r.images.page.hauteur }}" alt="" eleventy:ignore>
             {%- endif %}
 

@@ -8,6 +8,8 @@
     <!-- grain.css fournit la texture de bruit (--grain-image), partagée avec l'accueil et l'agenda -->
     <link rel="stylesheet" href="../grain.css">
     <link rel="stylesheet" href="ressources.css">
+    <!-- disques.css : les disques Calendrier et Accueil, partagés avec les pages de document -->
+    <link rel="stylesheet" href="disques.css">
     <script src="../grain.js" defer></script>
     <!-- defer : le script s'exécute une fois le HTML lu, il trouve donc tous les éléments -->
     <script src="ressources.js" defer></script>
@@ -17,7 +19,8 @@
     <div class="fond-grain" aria-hidden="true"></div>
 
     <!-- ==========================================================
-         Les deux disques, en haut à droite (même code que la page agenda) :
+         Les deux disques, en haut à droite (même code que la page agenda,
+         styles dans disques.css ; le même HTML est dans _modeles/document.njk) :
          - anneau bordeaux « Accueil », derrière ;
          - disque jaune « Calendrier », devant, même centre, plus petit.
          Chaque disque grossit au survol de son lien ; les liens sont

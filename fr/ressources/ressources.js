@@ -64,7 +64,8 @@ const T = TEXTES[LANGUE];
    Les dates sont des jours "AAAA-MM-JJ" lus à minuit UTC :
    on les affiche en UTC pour ne jamais tomber la veille.
    ---------------------------------------------------------- */
-const formatDate = new Intl.DateTimeFormat(LANGUE, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+// « 2 nov. 2026 » : format court, pour tenir sur le socle fin des previews
+const formatDate = new Intl.DateTimeFormat(LANGUE, { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 
 /* ----------------------------------------------------------
    PRÉPARATION DES DONNÉES
@@ -214,7 +215,7 @@ function creerPunaise() {
     return repere;
 }
 
-// Une info de la bande verticale (nature, pôles, date) ; l'étiquette n'est lue que par les lecteurs d'écran
+// Une info du socle (nature, pôles) ; l'étiquette n'est lue que par les lecteurs d'écran
 function creerInfo(classe, etiquette, contenu) {
     const info = creer("span", classe);
     if (etiquette) info.append(creer("span", "visuellement-masque", `${etiquette} `));
@@ -222,9 +223,30 @@ function creerInfo(classe, etiquette, contenu) {
     return info;
 }
 
+// Les infos écrites sur le socle, en 2 lignes : « NATURE · date », puis les pôles
+function creerInfos(doc) {
+    const infos = creer("span", "preview-infos");
+    const bloc = creer("span", "preview-infos-texte");
+
+    const ligne1 = creer("span", "preview-ligne");
+    if (doc.nature) ligne1.append(creerInfo("preview-nature", T.nature, natures.get(doc.nature)));
+    if (doc.nature && doc.date) ligne1.append(" · ");
+    if (doc.date) {
+        const date = creer("time", "preview-date", formatDate.format(new Date(`${doc.date}T00:00:00Z`)));
+        date.dateTime = doc.date;
+        ligne1.append(date);
+    }
+    if (ligne1.childNodes.length) bloc.append(ligne1);
+    if (doc.poles.length) bloc.append(creerInfo("preview-poles", T.poles, doc.poles.map((p) => poles.get(p)).join(" · ")));
+
+    infos.append(bloc);
+    return infos;
+}
+
 // Une preview : un lien vers la page du document.
-// Dans le HTML : titre, infos, image (ordre de lecture) ; à l'écran (grille CSS) :
-// l'image et la bande verticale des infos côte à côte, le titre en dessous.
+// Dans le HTML : titre, infos, image (ordre de lecture). À l'écran (CSS) : le cadre
+// (le socle des infos, et l'image posée dessus), puis le titre en dessous.
+// Au survol, l'image glisse et découvre le socle (voir ressources.css).
 function creerPreview(doc) {
     const element = creer("li", `preview nature-${doc.nature ?? "neutre"}`);
     if (doc.epingle) element.classList.add("est-epingle");
@@ -237,20 +259,14 @@ function creerPreview(doc) {
     const titre = creer("h2", "preview-titre");
     titre.append(creer("span", "preview-titre-texte", doc.titre));
 
-    const infos = creer("span", "preview-infos");
-    if (doc.nature) infos.append(creerInfo("preview-nature", T.nature, natures.get(doc.nature)));
-    if (doc.poles.length) infos.append(creerInfo("preview-poles", T.poles, doc.poles.map((p) => poles.get(p)).join(" · ")));
-    if (doc.date) {
-        const date = creer("time", "preview-date", formatDate.format(new Date(`${doc.date}T00:00:00Z`)));
-        date.dateTime = doc.date;
-        infos.append(date);
-    }
-
     const visuel = creer("span", "preview-visuel");
     visuel.append(doc.vignette ? creerImage(doc) : creerRemplacement(doc));
     if (doc.epingle) visuel.append(creerPunaise());
 
-    lien.append(titre, infos, visuel);
+    const cadre = creer("span", "preview-cadre");
+    cadre.append(creerInfos(doc), visuel);
+
+    lien.append(titre, cadre);
     element.append(lien);
     return element;
 }

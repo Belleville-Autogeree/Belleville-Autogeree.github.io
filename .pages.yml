@@ -164,7 +164,7 @@ content:
             - value: evenement
               label: Événement
             - value: presse
-              label: Presse (ils parlent de nous)
+              label: Médias
             - value: analyse
               label: Analyse
 

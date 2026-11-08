@@ -13,8 +13,9 @@
     --couleur-texte: #2b1a1f;
     --couleur-bordeaux: #913a4e;      /* accents, liens, boutons */
     --couleur-texte-bouton: #f5f9a3;
-    --couleur-retour: #f5f9a3;        /* lien « Toutes les ressources », sur le bleu */
-    --couleur-filet: rgb(43 26 31 / 25%);
+    --couleur-retour: #f5f9a3;        /* flèche de retour à la liste, sur le bleu */
+    --couleur-ligne: #913a4e;         /* ligne sous l'en-tête du document (comme les lignes des filtres) */
+    --couleur-filet: rgb(43 26 31 / 25%); /* bordures des tableaux dans le texte */
 
     /* Grain du fond (léger, mêmes réglages que le fond de l'agenda et de la liste) */
     --grain-fond-melange: hard-light;
@@ -30,11 +31,19 @@
 
     /* ---------- Mise en page ---------- */
     --largeur-feuille: 760px;
+    --largeur-max-image: 420px;       /* image en haut du document */
     --marge-page: 16px;
     --marge-feuille: clamp(20px, 5vw, 48px);
-    --rayon-bouton: 10px;             /* rectangles à bords arrondis (comme les filtres) */
+    --rayon-feuille: 12px;            /* coins arrondis, comme les previews et les cartes du calendrier */
+    --rayon-bouton: 8px;              /* rectangles à bords arrondis (comme les filtres) */
+    --contour-survol: 2px;            /* contour intérieur des boutons au survol */
     --hauteur-lecteur-pdf: 85vh;
     --espace: 8px;
+
+    /* ---------- Flèche de retour à la liste ---------- */
+    --taille-fleche: 30px;            /* longueur de chaque rectangle */
+    --epaisseur-fleche: 6px;
+    --epaisseur-fleche-survol: 10px;  /* au survol : plus grasse (d'un coup, sans animation) */
 }
 
 /* ---------- Polices ---------- */
@@ -105,21 +114,66 @@ body {
     mix-blend-mode: var(--grain-fond-melange);
 }
 
-/* ---------- Retour à la liste ---------- */
+/* Quand la fenêtre est étroite, les disques (en haut à droite) toucheraient la feuille :
+   la flèche reste en haut, mais la feuille commence sous les disques.
+   (--place-cercle vient de disques.css ; la ligne de la flèche fait environ
+   2 × --taille-fleche de haut, plus sa marge.) */
+@media (max-width: 1100px) {
+    .doc {
+        padding-top: max(0px, calc(var(--place-cercle) - var(--marge-page) - var(--taille-fleche) * 2 - var(--espace) * 2));
+    }
+}
+
+/* ---------- Retour à la liste : une grosse flèche « < » ----------
+   Deux rectangles qui se croisent à angle droit (un L), tournés de 45° :
+   la pointe du L regarde vers la gauche. Au survol, les rectangles
+   s'épaississent d'un coup (pas de transition). */
 .doc-nav {
     max-width: var(--largeur-feuille);
-    margin: 0 auto var(--espace);
+    margin: 0 auto calc(var(--espace) * 2);
 }
 
 .doc-retour {
+    display: inline-block;
+    padding: calc(var(--taille-fleche) * 0.3) calc(var(--taille-fleche) * 0.25); /* zone cliquable autour */
     color: var(--couleur-retour);
-    font-weight: 700;
-    text-decoration: none;
 }
 
-.doc-retour:hover,
+.fleche {
+    --epaisseur: var(--epaisseur-fleche);
+    position: relative;
+    display: block;
+    width: var(--taille-fleche);
+    height: var(--taille-fleche);
+    margin-left: calc(var(--taille-fleche) * 0.2);
+    transform: rotate(45deg);
+}
+
+.fleche-trait {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: currentColor;
+}
+
+.fleche-trait--1 {                    /* le rectangle debout (côté gauche du L) */
+    width: var(--epaisseur);
+    height: 100%;
+}
+
+.fleche-trait--2 {                    /* le rectangle couché (bas du L) : il croise le premier dans le coin */
+    width: 100%;
+    height: var(--epaisseur);
+}
+
+.doc-retour:hover .fleche,
+.doc-retour:focus-visible .fleche {
+    --epaisseur: var(--epaisseur-fleche-survol);
+}
+
 .doc-retour:focus-visible {
-    text-decoration: underline;
+    outline: 3px solid var(--couleur-retour);
+    outline-offset: 2px;
 }
 
 /* ---------- La feuille ---------- */
@@ -127,6 +181,7 @@ body {
     max-width: var(--largeur-feuille);
     margin: 0 auto;
     padding: var(--marge-feuille);
+    border-radius: var(--rayon-feuille);
     background: var(--couleur-feuille);
 }
 
@@ -159,7 +214,7 @@ body {
     gap: 0 calc(var(--espace) * 2);
     margin: calc(var(--espace) * 2) 0 0;
     padding-top: var(--espace);
-    border-top: 1px solid var(--couleur-filet);
+    border-top: 1px solid var(--couleur-ligne);
     font-size: var(--taille-petit);
 }
 
@@ -170,9 +225,10 @@ body {
 .doc-image {
     display: block;
     width: 100%;
-    max-width: 540px;
+    max-width: var(--largeur-max-image);
     height: auto;
     margin: calc(var(--espace) * 3) auto 0;
+    border-radius: var(--rayon-feuille);
 }
 
 /* ---------- Corps du texte (écrit dans Pages CMS) ---------- */
@@ -208,6 +264,7 @@ body {
     max-width: 100%;
     height: auto;
     margin: 1.2em auto;
+    border-radius: var(--rayon-feuille);
 }
 
 /* Image introuvable : la construction lui a retiré son adresse ; on ne l'affiche pas */
@@ -247,8 +304,10 @@ body {
     text-decoration: none;
 }
 
+/* Survol : un contour clair à l'intérieur, plutôt qu'un changement de couleur
+   (même principe que les filtres de la liste : le contour s'épaissit) */
 .doc-bouton:hover {
-    filter: brightness(1.15);
+    box-shadow: inset 0 0 0 var(--contour-survol) var(--couleur-texte-bouton);
 }
 
 .doc-bouton:focus-visible {
@@ -267,6 +326,7 @@ body {
     height: var(--hauteur-lecteur-pdf);
     margin-top: calc(var(--espace) * 2);
     border: none;
+    border-radius: var(--rayon-feuille);
     background: #fff;
 }
 

@@ -43,7 +43,7 @@ export const NATURES = {
         manifeste: "Manifeste",
         organisation: "Organisation",
         evenement: "Événement",
-        presse: "Presse (ils parlent de nous)",
+        presse: "Médias",
         analyse: "Analyse",
     },
 };
@@ -67,7 +67,9 @@ export const POLES = {
 export const TEXTES = {
     "fr-FR": {
         nomSite: "Mobilisation ENSA Paris-Belleville",
-        retour: "Toutes les ressources",
+        retour: "Toutes les ressources",                      // lu par les lecteurs d'écran (la flèche)
+        accueil: "Accueil",                                    // disques en haut à droite
+        calendrier: "Calendrier",
         poles: "Pôles",
         ouvrirPdf: "Ouvrir le PDF",
         lecteurPdf: (titre) => `${titre} (PDF)`,              // nom du lecteur, pour les lecteurs d'écran

@@ -2,6 +2,8 @@
    RESSOURCES – styles de la page liste
    Tout ce qui se règle (couleurs, tailles, espacements) est
    dans :root juste en dessous. Retouche le design ici.
+   Les disques (Calendrier, Accueil) sont dans disques.css,
+   partagé avec les pages de document.
    ========================================================== */
 
 :root {
@@ -16,48 +18,42 @@
     --grain-fond-melange: hard-light; /* mode de fusion (Lumière crue) */
     --grain-fond-intensite: 0.2;      /* contraste du bruit ; 0 = pas de grain */
 
-    /* Disque Calendrier (jaune, devant) */
-    --couleur-calendrier: #f5f9a3;
-    --couleur-texte-calendrier: #527ab5;  /* bleu sur jaune, comme sur l'accueil */
-    --grain-calendrier-melange: hard-light;
-    --grain-calendrier-intensite: 0.8;
-
-    /* Anneau Accueil (bordeaux, derrière le jaune) */
-    --couleur-accueil: #913a4e;
-    --couleur-texte-accueil: #f5f9a3;
-    --grain-accueil-melange: overlay;
-    --grain-accueil-intensite: 2.1;
-
     /* Filtres (rectangles à bords arrondis)
-       Non sélectionné : contour et texte bordeaux, sans fond.
-       Sélectionné : plein bordeaux, texte jaune. */
-    --couleur-filtre: #913a4e;        /* contour et texte d'un bouton non sélectionné */
+       Non sélectionné : contour bordeaux, texte clair, sans fond.
+       Sélectionné : plein bordeaux, texte clair.
+       Survol : le contour s'épaissit. */
+    --couleur-filtre: #913a4e;        /* contour d'un bouton non sélectionné */
+    --couleur-texte-filtre: #f5f9a3;  /* texte d'un bouton non sélectionné (comme les titres des bandeaux) */
+    --epaississement-filtre: 1.5px;   /* contour ajouté au survol */
     --couleur-filtre-actif: #913a4e;  /* fond d'un bouton sélectionné : le rouge du site */
     --couleur-texte-filtre-actif: #f5f9a3;
     --couleur-titre-bandeau: #f5f9a3; /* « Nature », « Pôle », sur le bleu */
     --couleur-ligne: #913a4e;         /* lignes entre les bandeaux et sous les bandeaux */
 
     /* Previews */
-    --couleur-carte: #f5f9a3;         /* fond du titre et de la bande des infos */
-    --couleur-nature: #913a4e;        /* « Compte rendu », « Manifeste »… */
+    --couleur-carte: #f5f9a3;         /* fond du titre */
+    --couleur-socle: #913a4e;         /* socle révélé au survol, où sont écrites les infos */
+    --couleur-texte-socle: #f5f9a3;
+    --grain-socle-melange: overlay;   /* grain du socle */
+    --grain-socle-intensite: 1.2;
     --couleur-epingle: #2b1a1f;       /* rond derrière la punaise : sombre, visible sur toutes les images */
     --couleur-punaise: #f5f9a3;       /* la punaise */
     --couleur-focus: #f5f9a3;         /* contour au clavier, sur le bleu */
 
-    /* Image de remplacement (document sans image), une couleur par nature – à caler à l'étape 8 */
-    --couleur-compte-rendu: #ffd9a1;
-    --couleur-manifeste: #f79cea;
-    --couleur-organisation: #1fafdb;
-    --couleur-evenement: #ba89ff;
-    --couleur-presse: #cfadff;
-    --couleur-analyse: #fff9c0;
-    --couleur-neutre: #fff4e9;        /* nature inconnue */
+    /* Image de remplacement (document sans image) : une couleur par nature, tons pastel */
+    --couleur-compte-rendu: #ffd9a1;  /* pêche */
+    --couleur-manifeste: #f79cea;     /* rose */
+    --couleur-organisation: #9fe2bf;  /* menthe */
+    --couleur-evenement: #ba89ff;     /* lavande */
+    --couleur-presse: #9cc9ff;        /* bleu ciel */
+    --couleur-analyse: #ff9f8a;       /* corail */
+    --couleur-neutre: #fff4e9;        /* nature inconnue : crème */
 
     /* ---------- Typographie ---------- */
     --police: 'raleway', system-ui, sans-serif;
     --taille-texte: 1rem;
     --taille-titre-carte: 0.95rem;
-    --taille-infos-carte: 0.72rem;    /* nature, pôles, date (bande verticale) */
+    --taille-infos-carte: 0.7rem;     /* infos écrites sur le socle */
     --taille-remplacement: 10cqi;     /* titre écrit dans l'image de remplacement : 10 % de la largeur de l'image */
     --taille-filtre: 0.78rem;
     --taille-titre-bandeau: 0.7rem;
@@ -69,14 +65,17 @@
     --largeur-min-image: 150px;       /* jamais plus petites (écran très bas) */
     --largeur-max-image: 340px;       /* jamais plus grandes (très grand écran) */
     --hauteur-titre: 3.4rem;          /* bloc du titre sous l'image (2 lignes max.) */
-    --largeur-infos: 3.4rem;          /* bande verticale des infos, à droite de l'image (3 lignes de texte).
-                                         Sa place reste réservée quand elle est cachée (les cartes ne bougent pas au survol). */
-    --duree-infos: .2s;               /* apparition de la bande au survol */
-    --ecart-colonnes: 8px;            /* espace horizontal entre les previews (en plus de la bande des infos) */
+    --ecart-colonnes: 8px;            /* espace horizontal entre les previews */
     --ecart-lignes: clamp(16px, 3vw, 56px); /* espace vertical : grandit avec la largeur de l'écran */
     --rayon-carte: 12px;              /* coins arrondis, comme les cartes du calendrier */
     --marge-interne-titre: 8px 10px 10px;
     --taille-punaise: 30px;           /* rond du repère « épinglé » */
+
+    /* ---------- Survol d'une preview (ordinateur seulement) ----------
+       L'image glisse vers le haut et la gauche de --decalage-volet et
+       découvre derrière elle un socle, vu en perspective cavalière. */
+    --decalage-volet: 2.2rem;         /* glissement de l'image = épaisseur du socle (2 lignes d'infos) */
+    --duree-infos: .25s;              /* durée du glissement */
 
     /* ---------- Boutons (filtres, « Voir plus ») : rectangles à bords arrondis ---------- */
     --rayon-bouton: 8px;
@@ -87,33 +86,40 @@
     --epaisseur-ligne-entete: 2px;    /* ligne sous les bandeaux (comme sous les jours de l'agenda) */
     --largeur-titre-bandeau: 3.6rem;  /* place de « NATURE », « PÔLE » */
 
-    /* ---------- Disques Calendrier (jaune) et Accueil (bordeaux) ---------- */
-    /* Le bordeaux a le même centre que le jaune, en plus grand : il forme un anneau autour. */
-    --diametre-calendrier: clamp(120px, 11.5vw, 200px); /* diamètre du jaune */
-    --debord-calendrier: 0.25;        /* part du disque jaune qui sort de l'écran (en haut et à droite) */
-    --rapport-accueil: 1.45;          /* diamètre du bordeaux = 1,45 x celui du jaune */
-    --taille-texte-calendrier: 15px;  /* « Calendrier », en unités du jaune (diamètre = 100) */
-    --taille-texte-accueil: 11px;     /* « Accueil », en unités du bordeaux (diamètre = 100) */
-    --duree-agrandissement: .8s;
-
     /* ---------- Espacements ---------- */
     --marge-page: 16px;
     --espace: 8px;
+
+    /* Place réservée à droite de chaque image pour son glissement (0 sans survol : téléphone) */
+    --reserve-volet: 0px;
 }
 
-/* Sur téléphone : 2 previews par ligne, disques plus petits */
+/* Sur téléphone : 2 previews par ligne */
 @media (max-width: 767px) {
     :root {
         --colonnes: 2;
         --ecart-colonnes: 12px;
-        --diametre-calendrier: 108px;
         --taille-titre-carte: 0.85rem;
-        --taille-infos-carte: 0.65rem;
-        --largeur-infos: 3rem;
+        --hauteur-filtre-tactile: 26px;   /* boutons de filtre faciles à toucher (24 px minimum recommandé) */
         --marge-interne-titre: 6px 8px 8px;
         --taille-punaise: 26px;
         --taille-filtre: 0.75rem;
         --largeur-titre-bandeau: 3.1rem;
+    }
+}
+
+/* Ordinateur : previews plus écartées */
+@media (min-width: 768px) {
+    :root {
+        --ecart-colonnes: clamp(28px, 3.5vw, 64px);   /* grandit avec la largeur de l'écran */
+        --ecart-lignes: clamp(44px, 4vw, 72px);       /* toujours plus que le glissement des images */
+    }
+}
+
+/* Ordinateur avec souris : on réserve la place du glissement à gauche de chaque image */
+@media (hover: hover) and (min-width: 768px) {
+    :root {
+        --reserve-volet: var(--decalage-volet);
     }
 }
 
@@ -147,9 +153,7 @@
 }
 
 body {
-    /* place prise par les disques, à droite et en haut (le bordeaux dépasse plus loin que le jaune) */
-    --place-cercle: calc(var(--diametre-calendrier) * (0.5 - var(--debord-calendrier) + var(--rapport-accueil) / 2) + var(--espace));
-    position: relative;               /* repère des disques */
+    position: relative;
     margin: 0;
     min-height: 100vh;
     background: var(--couleur-fond);
@@ -170,135 +174,15 @@ body {
     pointer-events: none;
 }
 
-.fond-grain::before,
-.cercle-calendrier::before,
-.cercle-accueil::before {
+.fond-grain::before {
     content: "";
     position: absolute;
     inset: 0;
     background-image: var(--grain-image);
     background-size: var(--grain-tile);
     image-rendering: var(--grain-rendering);
-}
-
-.fond-grain::before {
     filter: contrast(var(--grain-fond-intensite));
     mix-blend-mode: var(--grain-fond-melange);
-}
-
-/* ==========================================================
-   Disques (code repris de la page agenda)
-   Une boîte immobile, découpée en rond par clip-path. Au
-   survol du lien, seul le rayon du découpage grandit (le
-   grain ne bouge pas).
-   Différence avec l'agenda : position: fixed, les disques
-   restent en haut à droite de l'écran quand la liste défile.
-   ========================================================== */
-
-/* ---------- Disque Calendrier, jaune, en haut à droite ---------- */
-.cercle-calendrier {
-    --d: var(--diametre-calendrier);
-    --r: calc(var(--d) / 2);
-    --centre: calc(var(--d) * (0.5 - var(--debord-calendrier))); /* distance du centre aux bords haut et droit */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: 10;                      /* au-dessus de la page */
-    isolation: isolate;
-    background-color: var(--couleur-calendrier);
-    clip-path: circle(var(--r) at calc(100% - var(--centre)) var(--centre));
-    transition: clip-path var(--duree-agrandissement) ease;
-    pointer-events: none;
-}
-
-.cercle-calendrier::before {
-    filter: contrast(var(--grain-calendrier-intensite));
-    mix-blend-mode: var(--grain-calendrier-melange);
-}
-
-/* rayon 150vmax : couvre tout l'écran */
-body:has(.lien-calendrier:hover) .cercle-calendrier,
-body:has(.lien-calendrier:focus-visible) .cercle-calendrier {
-    --r: 150vmax;
-}
-
-/* Le calque du lien : un carré de la taille du disque, à la même place */
-.calque-calendrier {
-    position: fixed;
-    top: calc(var(--diametre-calendrier) * var(--debord-calendrier) * -1);
-    right: calc(var(--diametre-calendrier) * var(--debord-calendrier) * -1);
-    width: var(--diametre-calendrier);
-    height: var(--diametre-calendrier);
-    z-index: 11;                      /* au-dessus du disque, même agrandi */
-    overflow: visible;
-}
-
-.lien-calendrier text {
-    font-family: var(--police);
-    font-weight: 700;
-    font-size: var(--taille-texte-calendrier);
-    fill: var(--couleur-texte-calendrier);
-    text-anchor: middle;              /* startOffset = centre du texte */
-}
-
-.lien-calendrier:focus-visible {
-    outline: none;                    /* le disque qui s'agrandit sert d'indicateur */
-}
-
-/* ---------- Anneau Accueil, bordeaux, derrière le jaune ---------- */
-.cercle-accueil {
-    --d: calc(var(--diametre-calendrier) * var(--rapport-accueil));
-    --r: calc(var(--d) / 2);
-    --centre: calc(var(--diametre-calendrier) * (0.5 - var(--debord-calendrier))); /* = celui du jaune */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: 9;                       /* juste sous le jaune */
-    isolation: isolate;
-    background-color: var(--couleur-accueil);
-    clip-path: circle(var(--r) at calc(100% - var(--centre)) var(--centre));
-    transition: clip-path var(--duree-agrandissement) ease;
-    pointer-events: none;
-}
-
-.cercle-accueil::before {
-    filter: contrast(var(--grain-accueil-intensite));
-    mix-blend-mode: var(--grain-accueil-melange);
-}
-
-/* Agrandi, il reste sous le jaune */
-body:has(.lien-accueil:hover) .cercle-accueil,
-body:has(.lien-accueil:focus-visible) .cercle-accueil {
-    --r: 150vmax;
-}
-
-/* Calque du lien : un carré de la taille du bordeaux, centré au même endroit que le jaune */
-.calque-accueil {
-    --d: calc(var(--diametre-calendrier) * var(--rapport-accueil));
-    --centre: calc(var(--diametre-calendrier) * (0.5 - var(--debord-calendrier)));
-    position: fixed;
-    top: calc(var(--centre) - var(--d) / 2);
-    right: calc(var(--centre) - var(--d) / 2);
-    width: var(--d);
-    height: var(--d);
-    z-index: 11;
-    overflow: visible;
-}
-
-.lien-accueil text {
-    font-family: var(--police);
-    font-weight: 700;
-    font-size: var(--taille-texte-accueil);
-    fill: var(--couleur-texte-accueil);
-    text-anchor: middle;
-}
-
-.lien-accueil:focus-visible {
-    outline: none;
 }
 
 /* ==========================================================
@@ -383,15 +267,15 @@ html {
 }
 
 /* Un filtre : rectangle à bords arrondis.
-   Non sélectionné : contour et texte bordeaux, sans fond.
-   Sélectionné : plein bordeaux, texte jaune. */
+   Non sélectionné : contour bordeaux, texte clair, sans fond.
+   Sélectionné : plein bordeaux, texte clair. */
 .filtre {
     flex: none;
     padding: 3px 9px;
     border: var(--epaisseur-contour-filtre) solid var(--couleur-filtre);
     border-radius: var(--rayon-bouton);
     background: transparent;
-    color: var(--couleur-filtre);
+    color: var(--couleur-texte-filtre);
     font: inherit;
     font-size: var(--taille-filtre);
     font-weight: 700;
@@ -399,18 +283,23 @@ html {
     cursor: pointer;
 }
 
+/* Survol : seulement un contour plus épais. Il est dessiné à l'intérieur
+   (box-shadow inset) pour que le bouton ne change pas de taille. */
 .filtre:hover {
-    background: rgb(145 58 78 / 15%);  /* léger voile bordeaux au survol */
+    box-shadow: inset 0 0 0 var(--epaississement-filtre) var(--couleur-filtre);
+}
+
+/* Téléphone : boutons un peu plus hauts, faciles à toucher du doigt */
+@media (max-width: 767px) {
+    .filtre {
+        min-height: var(--hauteur-filtre-tactile);
+    }
 }
 
 .filtre[aria-pressed="true"] {
     border-color: var(--couleur-filtre-actif);
     background: var(--couleur-filtre-actif);
     color: var(--couleur-texte-filtre-actif);
-}
-
-.filtre[aria-pressed="true"]:hover {
-    filter: brightness(1.15);
 }
 
 .filtre:focus-visible,
@@ -441,9 +330,9 @@ html {
 /* ==========================================================
    Liste des previews
    ========================================================== */
-/* La liste commence sous l'en-tête fixe */
+/* La liste commence sous l'en-tête fixe (et laisse la place au glissement des images) */
 .ressources {
-    padding: calc(var(--hauteur-entete, 90px) + var(--ecart-lignes)) var(--marge-page) calc(var(--marge-page) * 3);
+    padding: calc(var(--hauteur-entete, 90px) + var(--ecart-lignes) + var(--reserve-volet)) var(--marge-page) calc(var(--marge-page) * 3);
 }
 
 /* Téléphone : la grille prend toute la largeur ; elle commence aussi sous les disques */
@@ -472,16 +361,16 @@ html {
    lignes entières tiennent sous l'en-tête, puis la grille est centrée.
    Calcul : hauteur d'une ligne = (écran − en-tête) / lignes − écart entre lignes ;
    on enlève le titre ; il reste l'image, dont la largeur = hauteur × 3/4 ;
-   la preview = l'image + la bande verticale des infos.
+   la colonne = l'image + la place réservée à son glissement.
    --hauteur-entete est mesurée par ressources.js (elle change avec les filtres). */
 @media (min-width: 768px) {
     .liste-ressources {
         --largeur-image: clamp(
             var(--largeur-min-image),
-            ((100dvh - var(--hauteur-entete, 200px)) / var(--lignes-visibles) - var(--ecart-lignes) - var(--hauteur-titre)) * 3 / 4,
+            ((100dvh - var(--hauteur-entete, 90px) - var(--reserve-volet)) / var(--lignes-visibles) - var(--ecart-lignes) - var(--hauteur-titre)) * 3 / 4,
             var(--largeur-max-image)
         );
-        grid-template-columns: repeat(var(--colonnes), minmax(0, calc(var(--largeur-image) + var(--largeur-infos))));
+        grid-template-columns: repeat(var(--colonnes), minmax(0, calc(var(--largeur-image) + var(--reserve-volet))));
         justify-content: center;
     }
 
@@ -491,29 +380,28 @@ html {
 }
 
 /* ---------- Une preview ----------
-   ┌────────────┐┌───┐
-   │   image    ││ i │  ← bande verticale : nature, pôles, date.
-   │    3:4     ││ n │    Visible seulement au survol (ou au clavier) ;
-   │            ││ f │    toujours visible sur un écran tactile.
-   ├────────────┤└───┘
-   │ titre      │        ← pas plus large que l'image
-   └────────────┘ */
+   Au repos :                 Au survol (ordinateur) :
+     ┌──────────┐             ┌──────────┐
+     │  image   │             │  image   ├─┐  ← l'image glisse en haut à gauche
+     │   3:4    │             │          │i│
+     │          │             │          │n│  ← socle bordeaux grainé, coins en biais,
+     ├──────────┤             └──────────┘f│    infos écrites dans sa tranche droite
+     │ titre    │               └──────────┘
+     └──────────┘               │ titre    │
+                                └──────────┘
+   La place du glissement est réservée à gauche de l'image.
+   Le titre ne bouge pas et n'est jamais plus large que l'image. */
 .preview-lien {
+    position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--largeur-infos);
     grid-template-rows: auto 1fr;
     height: 100%;                     /* toutes les cartes d'une ligne ont la même hauteur */
     color: var(--couleur-texte);
     text-decoration: none;
 }
 
-.preview-visuel { grid-column: 1; grid-row: 1; }
-.preview-infos  { grid-column: 2; grid-row: 1; }
-.preview-titre  { grid-column: 1; grid-row: 2; }
-
-.preview-lien:hover .preview-visuel img {
-    filter: brightness(1.06);
-}
+.preview-cadre { grid-row: 1; }
+.preview-titre { grid-row: 2; }
 
 .preview-lien:hover .preview-titre-texte {
     text-decoration: underline;
@@ -528,23 +416,25 @@ html {
     outline: 3px solid var(--couleur-focus);
 }
 
-/* Le cadre de l'image : toujours au format 3:4 (publication Instagram 1080 × 1440).
+/* Le cadre : la place réservée au glissement (à gauche), puis l'image */
+.preview-cadre {
+    position: relative;
+    display: block;
+}
+
+/* L'image : toujours au format 3:4 (publication Instagram 1080 × 1440).
    Coins arrondis en haut ; le titre, en dessous, a les coins arrondis en bas. */
 .preview-visuel {
     position: relative;
+    z-index: 1;                       /* devant le socle */
     display: block;
+    width: calc(100% - var(--reserve-volet));
+    margin-left: var(--reserve-volet);
     aspect-ratio: 3 / 4;
     overflow: hidden;
     border-radius: var(--rayon-carte) var(--rayon-carte) 0 0;
     background: var(--couleur-neutre);
     container-type: inline-size;      /* 1cqi = 1 % de la largeur de l'image (taille du titre de remplacement) */
-    transition: border-radius var(--duree-infos);
-}
-
-/* Bande des infos visible : le coin haut-droit de l'image devient carré, pour s'y raccorder */
-.preview-lien:hover .preview-visuel,
-.preview-lien:focus-visible .preview-visuel {
-    border-top-right-radius: 0;
 }
 
 .preview-visuel img {
@@ -612,63 +502,10 @@ html {
     transform: rotate(35deg);         /* punaise penchée, comme plantée */
 }
 
-/* La bande verticale des infos, à droite de l'image.
-   writing-mode: vertical-rl met le texte à la verticale ; la rotation
-   de 180° le fait lire de bas en haut, comme le dos d'un livre.
-   Résultat, de gauche à droite : nature, pôles, date.
-   contain: size : la bande prend la hauteur de l'image, sans jamais
-   l'agrandir, même avec un texte très long (coupé par « … »). */
-.preview-infos {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: 2px;
-    contain: size;
-    padding: 10px 6px;
-    /* coins arrondis à droite (avant la rotation de 180°, ce sont ceux de gauche) */
-    border-radius: var(--rayon-carte) 0 0 var(--rayon-carte);
-    background: var(--couleur-carte);
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-size: var(--taille-infos-carte);
-    line-height: 1.25;
-    opacity: 0;                       /* cachée : apparaît au survol */
-    transition: opacity var(--duree-infos);
-}
-
-.preview-lien:hover .preview-infos,
-.preview-lien:focus-visible .preview-infos {
-    opacity: 1;
-}
-
-/* Écran tactile (téléphone, tablette) : pas de survol possible, la bande est toujours visible */
-@media (hover: none) {
-    .preview-infos {
-        opacity: 1;
-    }
-
-    .preview-visuel {
-        border-top-right-radius: 0;
-    }
-}
-
-.preview-infos > * {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.preview-nature {
-    color: var(--couleur-nature);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
 /* Titre, seul sous l'image (et pas plus large qu'elle) */
 .preview-titre {
-    margin: 0;
+    width: calc(100% - var(--reserve-volet));
+    margin: 0 0 0 var(--reserve-volet);
     padding: var(--marge-interne-titre);
     border-radius: 0 0 var(--rayon-carte) var(--rayon-carte);
     background: var(--couleur-carte);
@@ -687,6 +524,143 @@ html {
     overflow: hidden;
 }
 
+/* ==========================================================
+   Le socle des infos et le glissement au survol
+   (comme les vignettes de Twitch)
+
+   --decalage vaut 0 au repos et --decalage-volet au survol ;
+   il est animé (déclaré avec @property, sinon une variable CSS
+   ne peut pas glisser d'une valeur à l'autre).
+   - l'image se déplace de (−decalage, −decalage) : en haut à gauche ;
+   - le socle, derrière, est découpé (clip-path) en forme de bloc
+     vu en perspective cavalière : sa tranche droite et sa tranche
+     du bas, reliées à l'image par des coins en biais à 45°.
+   ========================================================== */
+@property --decalage {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+/* Téléphone, écran tactile : pas de socle visible (les infos restent lues
+   par les lecteurs d'écran, comme pour un texte « visuellement-masque ») */
+.preview-infos {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+@media (hover: hover) and (min-width: 768px) {
+    .preview-lien {
+        --decalage: 0px;
+        transition: --decalage var(--duree-infos) ease-out;
+    }
+
+    .preview-lien:hover,
+    .preview-lien:focus-visible {
+        --decalage: var(--decalage-volet);
+        z-index: 2;                   /* l'image soulevée passe devant les previews voisines */
+    }
+
+    .preview-visuel {
+        transform: translate(calc(-1 * var(--decalage)), calc(-1 * var(--decalage)));
+        /* Au relâchement : le coin haut-droit ne redevient arrondi qu'une fois
+           l'image revenue à sa place (délai = durée du glissement) */
+        transition: border-top-right-radius 0s linear var(--duree-infos);
+    }
+
+    /* Au survol : coin haut-droit carré tout de suite, pour se raccorder au biais du socle */
+    .preview-lien:hover .preview-visuel,
+    .preview-lien:focus-visible .preview-visuel {
+        border-top-right-radius: 0;
+        transition-delay: 0s;
+    }
+
+    /* Le socle : il couvre la place de l'image, plus la bande réservée à gauche et en haut.
+       Repères (dans le socle) : D = --decalage-volet (fixe), d = --decalage (animé).
+       Ses 6 coins : haut-droit de l'image (100%−d, D−d) → haut-droit du socle (100%, D)
+       → bas-droit (100%, 100%) → bas-gauche du socle (D, 100%) → bas-gauche de l'image
+       (D−d, 100%−d) → bas-droit de l'image (100%−d, 100%−d).
+       Au repos (d = 0), la forme est plate : rien ne se voit. */
+    .preview-infos {
+        position: absolute;
+        top: calc(-1 * var(--decalage-volet));
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: auto;
+        height: auto;
+        isolation: isolate;
+        background: var(--couleur-socle);
+        color: var(--couleur-texte-socle);
+        font-size: var(--taille-infos-carte);
+        line-height: 1.2;
+        white-space: normal;
+        clip-path: polygon(
+            calc(100% - var(--decalage)) calc(var(--decalage-volet) - var(--decalage)),
+            100% var(--decalage-volet),
+            100% 100%,
+            var(--decalage-volet) 100%,
+            calc(var(--decalage-volet) - var(--decalage)) calc(100% - var(--decalage)),
+            calc(100% - var(--decalage)) calc(100% - var(--decalage))
+        );
+    }
+
+    /* Le grain du socle */
+    .preview-infos::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-image: var(--grain-image);
+        background-size: var(--grain-tile);
+        image-rendering: var(--grain-rendering);
+        filter: contrast(var(--grain-socle-intensite));
+        mix-blend-mode: var(--grain-socle-melange);
+    }
+
+    /* Le texte, dans la tranche droite du socle, à la verticale.
+       writing-mode: vertical-rl met le texte à la verticale ; la rotation
+       de 180° le fait lire de bas en haut, comme le dos d'un livre.
+       Deux lignes : « NATURE · date » (côté image), puis les pôles. */
+    .preview-infos-texte {
+        position: absolute;
+        top: var(--decalage-volet);
+        bottom: 0;
+        right: 0;
+        width: var(--decalage-volet);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 6px 2px;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+    }
+
+    .preview-infos-texte > * {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .preview-nature {
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+}
+
+/* Personne qui a demandé moins d'animations à son système : pas de glissement progressif */
+@media (prefers-reduced-motion: reduce) {
+    .preview-lien {
+        transition: none !important;
+    }
+}
+
 /* ---------- Sous la liste : compteur et « Voir plus » ---------- */
 .ressources-pied {
     display: flex;
@@ -702,7 +676,7 @@ html {
 }
 
 .bouton-voir-plus {
-    padding: 10px 28px;
+    padding: 8px 24px;
     border: none;
     border-radius: var(--rayon-bouton);
     background: var(--couleur-bordeaux);
@@ -712,8 +686,9 @@ html {
     cursor: pointer;
 }
 
+/* Survol : un contour clair à l'intérieur (même principe que les filtres : le contour s'épaissit) */
 .bouton-voir-plus:hover {
-    filter: brightness(1.15);
+    box-shadow: inset 0 0 0 2px var(--couleur-jaune);
 }
 
 .bouton-voir-plus:focus-visible {
