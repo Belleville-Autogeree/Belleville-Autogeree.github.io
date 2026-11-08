@@ -28,8 +28,17 @@
     --grain-accueil-melange: overlay;
     --grain-accueil-intensite: 2.1;
 
+    /* Filtres (rectangles à bords arrondis)
+       Non sélectionné : contour et texte bordeaux, sans fond.
+       Sélectionné : plein bordeaux, texte jaune. */
+    --couleur-filtre: #913a4e;        /* contour et texte d'un bouton non sélectionné */
+    --couleur-filtre-actif: #913a4e;  /* fond d'un bouton sélectionné : le rouge du site */
+    --couleur-texte-filtre-actif: #f5f9a3;
+    --couleur-titre-bandeau: #f5f9a3; /* « Nature », « Pôle », sur le bleu */
+    --couleur-ligne: #913a4e;         /* lignes entre les bandeaux et sous les bandeaux */
+
     /* Previews */
-    --couleur-carte: #f5f9a3;         /* fond du bloc texte sous l'image */
+    --couleur-carte: #f5f9a3;         /* fond du titre et de la bande des infos */
     --couleur-nature: #913a4e;        /* « Compte rendu », « Manifeste »… */
     --couleur-epingle: #2b1a1f;       /* rond derrière la punaise : sombre, visible sur toutes les images */
     --couleur-punaise: #f5f9a3;       /* la punaise */
@@ -48,23 +57,35 @@
     --police: 'raleway', system-ui, sans-serif;
     --taille-texte: 1rem;
     --taille-titre-carte: 0.95rem;
-    --taille-infos-carte: 0.75rem;    /* nature, pôles, date */
-    --taille-remplacement: 10cqi;     /* titre écrit dans l'image de remplacement : 10 % de la largeur de la carte */
+    --taille-infos-carte: 0.72rem;    /* nature, pôles, date (bande verticale) */
+    --taille-remplacement: 10cqi;     /* titre écrit dans l'image de remplacement : 10 % de la largeur de l'image */
+    --taille-filtre: 0.78rem;
+    --taille-titre-bandeau: 0.7rem;
 
     /* ---------- Grille des previews ---------- */
     --colonnes: 3;                    /* par ligne sur ordinateur (2 sur téléphone, plus bas) */
     --lignes-visibles: 2;             /* sur ordinateur : lignes entières visibles à l'ouverture de la page.
                                          La taille des previews est calculée d'après la hauteur de l'écran. */
-    --largeur-min-carte: 150px;       /* jamais plus petites (écran très bas) */
-    --largeur-max-carte: 340px;       /* jamais plus grandes (très grand écran) */
-    --hauteur-infos: 6.6rem;          /* hauteur du bloc texte sous l'image (titre sur 2 lignes max.) */
-    --ecart-grille: 16px;
-    --rayon-carte: 0;                 /* coins des previews (0 = carrés, comme les popups de l'agenda) */
-    --marge-interne-carte: 8px 10px 10px;
+    --largeur-min-image: 150px;       /* jamais plus petites (écran très bas) */
+    --largeur-max-image: 340px;       /* jamais plus grandes (très grand écran) */
+    --hauteur-titre: 3.4rem;          /* bloc du titre sous l'image (2 lignes max.) */
+    --largeur-infos: 3.4rem;          /* bande verticale des infos, à droite de l'image (3 lignes de texte).
+                                         Sa place reste réservée quand elle est cachée (les cartes ne bougent pas au survol). */
+    --duree-infos: .2s;               /* apparition de la bande au survol */
+    --ecart-colonnes: 8px;            /* espace horizontal entre les previews (en plus de la bande des infos) */
+    --ecart-lignes: clamp(16px, 3vw, 56px); /* espace vertical : grandit avec la largeur de l'écran */
+    --rayon-carte: 12px;              /* coins arrondis, comme les cartes du calendrier */
+    --marge-interne-titre: 8px 10px 10px;
     --taille-punaise: 30px;           /* rond du repère « épinglé » */
 
-    /* ---------- Bouton « Voir plus » (rectangle à bords arrondis, comme les filtres) ---------- */
-    --rayon-bouton: 10px;
+    /* ---------- Boutons (filtres, « Voir plus ») : rectangles à bords arrondis ---------- */
+    --rayon-bouton: 8px;
+    --epaisseur-contour-filtre: 1.5px;
+
+    /* ---------- En-tête fixe ---------- */
+    --epaisseur-ligne-bandeaux: 1px;  /* ligne entre les deux bandeaux */
+    --epaisseur-ligne-entete: 2px;    /* ligne sous les bandeaux (comme sous les jours de l'agenda) */
+    --largeur-titre-bandeau: 3.6rem;  /* place de « NATURE », « PÔLE » */
 
     /* ---------- Disques Calendrier (jaune) et Accueil (bordeaux) ---------- */
     /* Le bordeaux a le même centre que le jaune, en plus grand : il forme un anneau autour. */
@@ -84,11 +105,15 @@
 @media (max-width: 767px) {
     :root {
         --colonnes: 2;
-        --ecart-grille: 12px;
+        --ecart-colonnes: 12px;
         --diametre-calendrier: 108px;
-        --taille-titre-carte: 0.9rem;
-        --marge-interne-carte: 8px 8px 10px;
+        --taille-titre-carte: 0.85rem;
+        --taille-infos-carte: 0.65rem;
+        --largeur-infos: 3rem;
+        --marge-interne-titre: 6px 8px 8px;
         --taille-punaise: 26px;
+        --taille-filtre: 0.75rem;
+        --largeur-titre-bandeau: 3.1rem;
     }
 }
 
@@ -277,20 +302,155 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
 }
 
 /* ==========================================================
-   En-tête : bandeaux de filtres (étape 6) et recherche (étape 7).
-   Il fait au moins la hauteur des disques, et laisse leur place
-   à droite : la grille commence en dessous.
+   En-tête FIXE : les deux bandeaux de filtres.
+   Il reste en haut de l'écran quand la liste défile ; les
+   previews passent dessous. Il laisse à droite la place des
+   disques (qui restent au-dessus de lui).
+   Sa hauteur est mesurée par ressources.js (--hauteur-entete)
+   pour que la liste commence juste en dessous.
    ========================================================== */
 .ressources-entete {
-    min-height: var(--place-cercle);
-    padding: var(--marge-page) var(--place-cercle) var(--espace) var(--marge-page);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;                       /* au-dessus des previews, sous les disques (9 à 11) */
+    isolation: isolate;
+    padding: var(--espace) var(--place-cercle) var(--espace) var(--marge-page);
+    background: var(--couleur-fond);
+    border-bottom: var(--epaisseur-ligne-entete) solid var(--couleur-ligne);
+}
+
+/* Même grain que le fond de la page, pour que l'en-tête ne se voie pas
+   (les deux commencent en haut à gauche de l'écran : le grain se raccorde) */
+.ressources-entete::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--grain-image);
+    background-size: var(--grain-tile);
+    image-rendering: var(--grain-rendering);
+    filter: contrast(var(--grain-fond-intensite));
+    mix-blend-mode: var(--grain-fond-melange);
+}
+
+/* Le haut de la liste (et un élément atteint au clavier) n'est jamais caché sous l'en-tête */
+html {
+    scroll-padding-top: calc(var(--hauteur-entete, 0px) + var(--espace));
+}
+
+.filtres[hidden] {
+    display: none;
+}
+
+/* Un bandeau, sur UNE seule ligne : son titre (« Nature », « Pôle »), puis ses boutons.
+   S'il n'y a pas assez de place (fenêtre étroite, téléphone), les boutons défilent
+   de côté (au doigt, ou avec la molette + Maj) au lieu de passer à la ligne. */
+.bandeau {
+    display: flex;
+    align-items: center;
+    gap: var(--espace);
+    padding: 6px 0;
+}
+
+/* La ligne bordeaux entre les deux bandeaux */
+.bandeau + .bandeau {
+    border-top: var(--epaisseur-ligne-bandeaux) solid var(--couleur-ligne);
+}
+
+.bandeau-titre {
+    flex: none;
+    width: var(--largeur-titre-bandeau);
+    color: var(--couleur-titre-bandeau);
+    font-size: var(--taille-titre-bandeau);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.bandeau-boutons {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;            /* barre de défilement cachée */
+}
+
+.bandeau-boutons::-webkit-scrollbar {
+    display: none;
+}
+
+/* Un filtre : rectangle à bords arrondis.
+   Non sélectionné : contour et texte bordeaux, sans fond.
+   Sélectionné : plein bordeaux, texte jaune. */
+.filtre {
+    flex: none;
+    padding: 3px 9px;
+    border: var(--epaisseur-contour-filtre) solid var(--couleur-filtre);
+    border-radius: var(--rayon-bouton);
+    background: transparent;
+    color: var(--couleur-filtre);
+    font: inherit;
+    font-size: var(--taille-filtre);
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.filtre:hover {
+    background: rgb(145 58 78 / 15%);  /* léger voile bordeaux au survol */
+}
+
+.filtre[aria-pressed="true"] {
+    border-color: var(--couleur-filtre-actif);
+    background: var(--couleur-filtre-actif);
+    color: var(--couleur-texte-filtre-actif);
+}
+
+.filtre[aria-pressed="true"]:hover {
+    filter: brightness(1.15);
+}
+
+.filtre:focus-visible,
+.effacer-filtres:focus-visible {
+    outline: 3px solid var(--couleur-focus);
+    outline-offset: 2px;
+}
+
+/* « Effacer les filtres » : au bout de la ligne des pôles, seulement quand un filtre est actif */
+.effacer-filtres {
+    flex: none;
+    margin-left: auto;
+    padding: 2px 0;
+    border: none;
+    background: none;
+    color: var(--couleur-texte-sur-fond);
+    font: inherit;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.effacer-filtres[hidden] {
+    display: none;
 }
 
 /* ==========================================================
    Liste des previews
    ========================================================== */
+/* La liste commence sous l'en-tête fixe */
 .ressources {
-    padding: 0 var(--marge-page) calc(var(--marge-page) * 3);
+    padding: calc(var(--hauteur-entete, 90px) + var(--ecart-lignes)) var(--marge-page) calc(var(--marge-page) * 3);
+}
+
+/* Téléphone : la grille prend toute la largeur ; elle commence aussi sous les disques */
+@media (max-width: 767px) {
+    .ressources {
+        padding-top: calc(max(var(--hauteur-entete, 90px), var(--place-cercle)) + var(--espace));
+    }
 }
 
 .ressources-message {
@@ -302,66 +462,89 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
 .liste-ressources {
     display: grid;
     grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
-    gap: var(--ecart-grille);
+    gap: var(--ecart-lignes) var(--ecart-colonnes);
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-/* Ordinateur : la largeur d'une preview est calculée pour que --lignes-visibles
+/* Ordinateur : la taille d'une preview est calculée pour que --lignes-visibles
    lignes entières tiennent sous l'en-tête, puis la grille est centrée.
-   Calcul : hauteur disponible pour une ligne = (écran − en-tête) / lignes − écart ;
-   on enlève le bloc texte ; il reste l'image, dont la largeur = hauteur × 3/4.
-   --hauteur-entete est mesurée par ressources.js (elle changera avec les filtres). */
+   Calcul : hauteur d'une ligne = (écran − en-tête) / lignes − écart entre lignes ;
+   on enlève le titre ; il reste l'image, dont la largeur = hauteur × 3/4 ;
+   la preview = l'image + la bande verticale des infos.
+   --hauteur-entete est mesurée par ressources.js (elle change avec les filtres). */
 @media (min-width: 768px) {
     .liste-ressources {
-        --largeur-carte: clamp(
-            var(--largeur-min-carte),
-            ((100dvh - var(--hauteur-entete, 200px)) / var(--lignes-visibles) - var(--ecart-grille) - var(--hauteur-infos)) * 3 / 4,
-            var(--largeur-max-carte)
+        --largeur-image: clamp(
+            var(--largeur-min-image),
+            ((100dvh - var(--hauteur-entete, 200px)) / var(--lignes-visibles) - var(--ecart-lignes) - var(--hauteur-titre)) * 3 / 4,
+            var(--largeur-max-image)
         );
-        grid-template-columns: repeat(var(--colonnes), minmax(0, var(--largeur-carte)));
+        grid-template-columns: repeat(var(--colonnes), minmax(0, calc(var(--largeur-image) + var(--largeur-infos))));
         justify-content: center;
     }
 
-    .preview-infos {
-        height: var(--hauteur-infos);   /* hauteur fixe : le calcul ci-dessus reste juste */
-        overflow: hidden;
+    .preview-titre {
+        height: var(--hauteur-titre);   /* hauteur fixe : le calcul ci-dessus reste juste */
     }
 }
 
-/* ---------- Une preview : image 3:4, puis titre, nature, pôles, date ---------- */
+/* ---------- Une preview ----------
+   ┌────────────┐┌───┐
+   │   image    ││ i │  ← bande verticale : nature, pôles, date.
+   │    3:4     ││ n │    Visible seulement au survol (ou au clavier) ;
+   │            ││ f │    toujours visible sur un écran tactile.
+   ├────────────┤└───┘
+   │ titre      │        ← pas plus large que l'image
+   └────────────┘ */
 .preview-lien {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--largeur-infos);
+    grid-template-rows: auto 1fr;
     height: 100%;                     /* toutes les cartes d'une ligne ont la même hauteur */
-    border-radius: var(--rayon-carte);
-    overflow: hidden;
-    background: var(--couleur-carte);
     color: var(--couleur-texte);
     text-decoration: none;
 }
+
+.preview-visuel { grid-column: 1; grid-row: 1; }
+.preview-infos  { grid-column: 2; grid-row: 1; }
+.preview-titre  { grid-column: 1; grid-row: 2; }
 
 .preview-lien:hover .preview-visuel img {
     filter: brightness(1.06);
 }
 
-.preview-lien:hover .preview-titre {
+.preview-lien:hover .preview-titre-texte {
     text-decoration: underline;
 }
 
 .preview-lien:focus-visible {
-    outline: 3px solid var(--couleur-focus);
-    outline-offset: 3px;
+    outline: none;                    /* l'indicateur est sur l'image et le titre, juste en dessous */
 }
 
-/* Le cadre de l'image : toujours au format 3:4 (publication Instagram 1080 × 1440) */
+.preview-lien:focus-visible .preview-visuel,
+.preview-lien:focus-visible .preview-titre {
+    outline: 3px solid var(--couleur-focus);
+}
+
+/* Le cadre de l'image : toujours au format 3:4 (publication Instagram 1080 × 1440).
+   Coins arrondis en haut ; le titre, en dessous, a les coins arrondis en bas. */
 .preview-visuel {
     position: relative;
     display: block;
     aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: var(--rayon-carte) var(--rayon-carte) 0 0;
     background: var(--couleur-neutre);
-    container-type: inline-size;      /* 1cqi = 1 % de la largeur de la carte (taille du titre de remplacement) */
+    container-type: inline-size;      /* 1cqi = 1 % de la largeur de l'image (taille du titre de remplacement) */
+    transition: border-radius var(--duree-infos);
+}
+
+/* Bande des infos visible : le coin haut-droit de l'image devient carré, pour s'y raccorder */
+.preview-lien:hover .preview-visuel,
+.preview-lien:focus-visible .preview-visuel {
+    border-top-right-radius: 0;
 }
 
 .preview-visuel img {
@@ -429,34 +612,48 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
     transform: rotate(35deg);         /* punaise penchée, comme plantée */
 }
 
-/* Le bloc texte sous l'image */
+/* La bande verticale des infos, à droite de l'image.
+   writing-mode: vertical-rl met le texte à la verticale ; la rotation
+   de 180° le fait lire de bas en haut, comme le dos d'un livre.
+   Résultat, de gauche à droite : nature, pôles, date.
+   contain: size : la bande prend la hauteur de l'image, sans jamais
+   l'agrandir, même avec un texte très long (coupé par « … »). */
 .preview-infos {
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     gap: 2px;
-    flex: 1;
-    padding: var(--marge-interne-carte);
+    contain: size;
+    padding: 10px 6px;
+    /* coins arrondis à droite (avant la rotation de 180°, ce sont ceux de gauche) */
+    border-radius: var(--rayon-carte) 0 0 var(--rayon-carte);
+    background: var(--couleur-carte);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
     font-size: var(--taille-infos-carte);
+    line-height: 1.25;
+    opacity: 0;                       /* cachée : apparaît au survol */
+    transition: opacity var(--duree-infos);
 }
 
-/* Titre : 2 lignes au maximum, puis « … » */
-.preview-titre {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    overflow: hidden;
-    flex: none;
-    margin: 0 0 2px;
-    font-size: var(--taille-titre-carte);
-    font-weight: 800;
-    line-height: 1.2;
-    overflow-wrap: anywhere;
+.preview-lien:hover .preview-infos,
+.preview-lien:focus-visible .preview-infos {
+    opacity: 1;
 }
 
-/* Nature et pôles : une ligne chacun, puis « … » */
-.preview-nature,
-.preview-poles {
+/* Écran tactile (téléphone, tablette) : pas de survol possible, la bande est toujours visible */
+@media (hover: none) {
+    .preview-infos {
+        opacity: 1;
+    }
+
+    .preview-visuel {
+        border-top-right-radius: 0;
+    }
+}
+
+.preview-infos > * {
+    display: block;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -469,9 +666,25 @@ body:has(.lien-accueil:focus-visible) .cercle-accueil {
     letter-spacing: 0.04em;
 }
 
-.preview-date {
-    margin-top: auto;                 /* la date tout en bas de la carte */
-    padding-top: 4px;
+/* Titre, seul sous l'image (et pas plus large qu'elle) */
+.preview-titre {
+    margin: 0;
+    padding: var(--marge-interne-titre);
+    border-radius: 0 0 var(--rayon-carte) var(--rayon-carte);
+    background: var(--couleur-carte);
+    font-size: var(--taille-titre-carte);
+    font-weight: 800;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+/* 2 lignes au maximum, puis « … » */
+.preview-titre-texte {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
 }
 
 /* ---------- Sous la liste : compteur et « Voir plus » ---------- */

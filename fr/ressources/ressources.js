@@ -2,13 +2,16 @@
    RESSOURCES – script de la page liste
    Étape 5 : chargement de l'index, previews, tri, épinglés,
              affichage par lots (« Voir plus »).
-   Étape 6 (à venir) : bandeaux de filtres.
-   Étape 7 (à venir) : recherche.
+   Étape 6 : bandeaux de filtres (nature, pôle), inscrits dans
+             l'adresse pour pouvoir partager une sélection.
+   (Recherche par mots-clés : mise de côté, peut-être pour une
+   future mise à jour. Elle se brancherait dans correspond().)
 
    La page ne lit qu'un fichier : index.json, fabriqué par
    Eleventy à chaque publication (voir index.11ty.mjs). Il ne
    contient que ce qu'affichent les previews, jamais le
-   contenu des documents.
+   contenu des documents. Le filtrage se fait en mémoire,
+   sans nouvelle requête.
    ========================================================== */
 "use strict";
 
@@ -18,6 +21,10 @@
 const LANGUE = "fr-FR";          // "en-GB" pour la version anglaise
 const TAILLE_LOT = 24;           // nombre de previews affichées d'un coup (puis « Voir plus »)
 const FICHIER_INDEX = "index.json"; // dans le même dossier que la page (fr/ressources/)
+
+// Noms des filtres dans l'adresse : ressources.html?nature=manifeste,analyse&pole=budget
+const PARAMETRE_NATURE = "nature";
+const PARAMETRE_POLE = "pole";
 
 /* ----------------------------------------------------------
    TEXTES DE L'INTERFACE – tout est regroupé ici.
@@ -30,7 +37,13 @@ const TEXTES = {
         accueil: "Accueil",
         calendrier: "Calendrier",
         epingle: "Épinglé",
-        poles: "Pôles :",                       // lu par les lecteurs d'écran avant la liste des pôles
+        nature: "Nature :",                     // lus par les lecteurs d'écran devant les infos de la preview
+        poles: "Pôles :",
+        // Filtres
+        bandeauNatures: "Nature",
+        bandeauPoles: "Pôle",
+        effacerFiltres: "Effacer les filtres",
+        // Liste
         voirPlus: "Voir plus",
         // « 24 documents affichés sur 57 », « 1 document »
         compteur: (affiches, total) => {
@@ -40,6 +53,7 @@ const TEXTES = {
         },
         chargement: "Chargement des ressources…",
         aucunDocument: "Aucun document pour le moment.",
+        aucunResultat: "Aucun document ne correspond à ces filtres.",
         erreurChargement: "Impossible de charger les ressources pour le moment. Réessaie dans quelques minutes.",
     },
 };
@@ -75,7 +89,7 @@ function lireDate(valeur) {
 // Une adresse du site (commence par « / ») ; sinon "" (on refuse javascript:, http://ailleurs…)
 const adresseDuSite = (valeur) => (/^\/(?!\/)/.test(texte(valeur)) ? texte(valeur) : "");
 
-// [{ valeur, nom }, …] → Map valeur → nom, en gardant l'ordre (servira aux boutons de filtre)
+// [{ valeur, nom }, …] → Map valeur → nom, en gardant l'ordre (c'est l'ordre des boutons de filtre)
 function lireListe(liste) {
     const resultat = new Map();
     if (!Array.isArray(liste)) return resultat;
@@ -141,7 +155,7 @@ function preparerIndex(donnees) {
 }
 
 /* ----------------------------------------------------------
-   CONSTRUCTION DES ÉLÉMENTS
+   CONSTRUCTION DES PREVIEWS
    ---------------------------------------------------------- */
 
 // Petit raccourci : crée un élément avec une classe et (éventuellement) un texte
@@ -156,7 +170,7 @@ function creer(balise, classe, contenu) {
 function creerRemplacement(doc) {
     const remplacement = creer("span", "preview-remplacement");
     remplacement.append(creer("span", "preview-remplacement-titre", doc.titre));
-    remplacement.setAttribute("aria-hidden", "true"); // le titre est déjà lu juste en dessous
+    remplacement.setAttribute("aria-hidden", "true"); // le titre est déjà lu juste avant
     return remplacement;
 }
 
@@ -166,14 +180,14 @@ function creerImage(doc) {
     image.src = doc.vignette.src;
     if (doc.vignette.srcset) {
         image.srcset = doc.vignette.srcset;
-        // largeur affichée : au plus 340 px sur ordinateur (--largeur-max-carte), la moitié de l'écran sur téléphone
-        image.sizes = "(min-width: 768px) 340px, 50vw";
+        // largeur affichée : au plus 340 px sur ordinateur (--largeur-max-image), environ un tiers de l'écran sur téléphone
+        image.sizes = "(min-width: 768px) 340px, 35vw";
     }
     if (doc.vignette.largeur && doc.vignette.hauteur) {
         image.width = doc.vignette.largeur;   // réserve la place avant le chargement (la page ne saute pas)
         image.height = doc.vignette.hauteur;
     }
-    image.alt = "";                // décorative : le titre est écrit juste en dessous
+    image.alt = "";                // décorative : le titre est écrit juste à côté
     image.loading = "lazy";        // chargée seulement à l'approche de l'écran
     image.decoding = "async";
     // Image introuvable : remplacement plutôt qu'une icône cassée
@@ -200,7 +214,17 @@ function creerPunaise() {
     return repere;
 }
 
-// Une preview : un lien vers la page du document
+// Une info de la bande verticale (nature, pôles, date) ; l'étiquette n'est lue que par les lecteurs d'écran
+function creerInfo(classe, etiquette, contenu) {
+    const info = creer("span", classe);
+    if (etiquette) info.append(creer("span", "visuellement-masque", `${etiquette} `));
+    info.append(contenu);
+    return info;
+}
+
+// Une preview : un lien vers la page du document.
+// Dans le HTML : titre, infos, image (ordre de lecture) ; à l'écran (grille CSS) :
+// l'image et la bande verticale des infos côte à côte, le titre en dessous.
 function creerPreview(doc) {
     const element = creer("li", `preview nature-${doc.nature ?? "neutre"}`);
     if (doc.epingle) element.classList.add("est-epingle");
@@ -208,29 +232,25 @@ function creerPreview(doc) {
     const lien = creer("a", "preview-lien");
     lien.href = doc.url;
 
-    const visuel = creer("span", "preview-visuel");
-    visuel.append(doc.vignette ? creerImage(doc) : creerRemplacement(doc));
-    if (doc.epingle) visuel.append(creerPunaise());
+    // Le texte est dans un <span> à part : c'est lui qui est coupé après 2 lignes
+    // (si on coupait le <h2>, la 3e ligne déborderait dans sa marge intérieure)
+    const titre = creer("h2", "preview-titre");
+    titre.append(creer("span", "preview-titre-texte", doc.titre));
 
-    // Dans un lien, on n'a droit qu'à du contenu non interactif : titre, puis des <span> en display: block
     const infos = creer("span", "preview-infos");
-    infos.append(creer("h2", "preview-titre", doc.titre));
-    if (doc.nature) infos.append(creer("span", "preview-nature", natures.get(doc.nature)));
-    if (doc.poles.length) {
-        const lignePoles = creer("span", "preview-poles");
-        lignePoles.append(
-            creer("span", "visuellement-masque", `${T.poles} `),
-            doc.poles.map((p) => poles.get(p)).join(" · "),
-        );
-        infos.append(lignePoles);
-    }
+    if (doc.nature) infos.append(creerInfo("preview-nature", T.nature, natures.get(doc.nature)));
+    if (doc.poles.length) infos.append(creerInfo("preview-poles", T.poles, doc.poles.map((p) => poles.get(p)).join(" · ")));
     if (doc.date) {
         const date = creer("time", "preview-date", formatDate.format(new Date(`${doc.date}T00:00:00Z`)));
         date.dateTime = doc.date;
         infos.append(date);
     }
 
-    lien.append(visuel, infos);
+    const visuel = creer("span", "preview-visuel");
+    visuel.append(doc.vignette ? creerImage(doc) : creerRemplacement(doc));
+    if (doc.epingle) visuel.append(creerPunaise());
+
+    lien.append(titre, infos, visuel);
     element.append(lien);
     return element;
 }
@@ -242,15 +262,116 @@ let documents = [];               // liste préparée par preparerIndex(), déj�
 let natures = new Map();          // valeur → nom affiché (« compte-rendu » → « Compte rendu »)
 let poles = new Map();
 let etatChargement = "en-cours";  // "en-cours", "charge" ou "erreur"
+let visibles = [];                // documents qui passent les filtres (recalculé à chaque clic)
 let nbAffiches = 0;               // combien de previews sont dans la page
 
-// Les documents à montrer. Étape 6 : on appliquera ici les filtres.
-function documentsVisibles() {
-    return documents;
+// Filtres choisis (aussi dans l'adresse). Un ensemble vide = ce bandeau ne filtre rien.
+const filtres = {
+    natures: new Set(),
+    poles: new Set(),
+};
+
+/* ----------------------------------------------------------
+   FILTRES
+   Logique (défaut) :
+   - dans un même bandeau, un document passe s'il correspond à
+     L'UNE des valeurs choisies ;
+   - entre les deux bandeaux, il doit correspondre AUX DEUX ;
+   - un bandeau sans sélection ne filtre rien.
+   ---------------------------------------------------------- */
+function correspond(doc) {
+    const natureOk = filtres.natures.size === 0 || filtres.natures.has(doc.nature);
+    const poleOk = filtres.poles.size === 0 || doc.poles.some((p) => filtres.poles.has(p));
+    return natureOk && poleOk;
+}
+
+const filtresActifs = () => filtres.natures.size > 0 || filtres.poles.size > 0;
+
+// Un bandeau de boutons : un bouton par valeur, qui s'allume et s'éteint au clic
+function remplirBandeau(idConteneur, valeurs, choix) {
+    const conteneur = document.getElementById(idConteneur);
+    conteneur.replaceChildren(...[...valeurs].map(([valeur, nom]) => {
+        const bouton = creer("button", "filtre", nom);
+        bouton.type = "button";
+        bouton.dataset.valeur = valeur;
+        bouton.addEventListener("click", () => {
+            if (choix.has(valeur)) choix.delete(valeur);
+            else choix.add(valeur);
+            filtresModifies();
+        });
+        return bouton;
+    }));
+}
+
+// Allume les boutons choisis (aria-pressed : « enfoncé » pour les lecteurs d'écran)
+function afficherEtatFiltres() {
+    for (const [idConteneur, choix] of [["bandeau-natures", filtres.natures], ["bandeau-poles", filtres.poles]]) {
+        for (const bouton of document.getElementById(idConteneur).children) {
+            bouton.setAttribute("aria-pressed", String(choix.has(bouton.dataset.valeur)));
+        }
+    }
+    document.getElementById("effacer-filtres").hidden = !filtresActifs();
+}
+
+// Après chaque clic : adresse, boutons, puis la liste repart du début
+function filtresModifies() {
+    ecrireAdresse();
+    afficherEtatFiltres();
+    afficherListe();
+}
+
+function effacerFiltres() {
+    filtres.natures.clear();
+    filtres.poles.clear();
+    filtresModifies();
+    document.querySelector(".filtre")?.focus(); // le bouton « Effacer » disparaît : le clavier va au premier filtre
+}
+
+function preparerFiltres() {
+    remplirBandeau("bandeau-natures", natures, filtres.natures);
+    remplirBandeau("bandeau-poles", poles, filtres.poles);
+    afficherEtatFiltres();
+    document.getElementById("filtres").hidden = false;
 }
 
 /* ----------------------------------------------------------
-   AFFICHAGE
+   ADRESSE (?nature=manifeste,analyse&pole=budget)
+   Les filtres choisis sont écrits dans l'adresse, pour qu'on
+   puisse partager un lien vers une sélection. On remplace
+   l'adresse (replaceState) sans créer d'entrée d'historique :
+   le bouton retour ramène à la page précédente, pas au filtre
+   précédent.
+   ---------------------------------------------------------- */
+
+// Lit les filtres dans l'adresse. Les valeurs inconnues sont ignorées.
+function lireAdresse() {
+    const parametres = new URLSearchParams(location.search);
+    const lire = (nom, connues, choix) => {
+        choix.clear();
+        for (const valeur of (parametres.get(nom) ?? "").split(",")) {
+            if (connues.has(valeur.trim())) choix.add(valeur.trim());
+        }
+    };
+    lire(PARAMETRE_NATURE, natures, filtres.natures);
+    lire(PARAMETRE_POLE, poles, filtres.poles);
+    ecrireAdresse(); // nettoie l'adresse si elle contenait des valeurs inconnues
+}
+
+function ecrireAdresse() {
+    const parametres = new URLSearchParams(location.search);
+    parametres.delete(PARAMETRE_NATURE);
+    parametres.delete(PARAMETRE_POLE);
+    // Dans l'ordre des bandeaux, séparées par des virgules (plus lisible que %2C)
+    const enTexte = (connues, choix) => [...connues.keys()].filter((v) => choix.has(v)).map(encodeURIComponent).join(",");
+    const morceaux = [parametres.toString()];
+    if (filtres.natures.size) morceaux.push(`${PARAMETRE_NATURE}=${enTexte(natures, filtres.natures)}`);
+    if (filtres.poles.size) morceaux.push(`${PARAMETRE_POLE}=${enTexte(poles, filtres.poles)}`);
+    const recherche = morceaux.filter(Boolean).join("&");
+    history.replaceState(null, "", `${location.pathname}${recherche ? `?${recherche}` : ""}${location.hash}`);
+}
+
+/* ----------------------------------------------------------
+   AFFICHAGE DE LA LISTE
    ---------------------------------------------------------- */
 
 function afficherMessage(contenu) {
@@ -261,7 +382,7 @@ function afficherMessage(contenu) {
 
 // Compteur et bouton « Voir plus », sous la liste
 function afficherPied() {
-    const total = documentsVisibles().length;
+    const total = visibles.length;
     document.getElementById("ressources-compteur").textContent = T.compteur(nbAffiches, total);
     document.getElementById("bouton-voir-plus").hidden = nbAffiches >= total;
 }
@@ -270,7 +391,7 @@ function afficherPied() {
 // Renvoie le premier élément ajouté (pour y mettre le focus après « Voir plus »).
 function ajouterLot() {
     const liste = document.getElementById("liste-ressources");
-    const lot = documentsVisibles().slice(nbAffiches, nbAffiches + TAILLE_LOT);
+    const lot = visibles.slice(nbAffiches, nbAffiches + TAILLE_LOT);
     const elements = lot.map(creerPreview);
     liste.append(...elements);
     nbAffiches += lot.length;
@@ -278,13 +399,15 @@ function ajouterLot() {
     return elements[0] ?? null;
 }
 
-// Redessine toute la liste depuis le début (au chargement ; plus tard, à chaque filtre)
+// Redessine toute la liste depuis le début (au chargement et à chaque changement de filtre)
 function afficherListe() {
+    visibles = documents.filter(correspond);
     document.getElementById("liste-ressources").replaceChildren();
     nbAffiches = 0;
 
     if (etatChargement === "charge") {
-        afficherMessage(documentsVisibles().length ? "" : T.aucunDocument);
+        if (!documents.length) afficherMessage(T.aucunDocument);
+        else afficherMessage(visibles.length ? "" : T.aucunResultat);
     }
     ajouterLot();
 }
@@ -300,6 +423,9 @@ function remplirTextesFixes() {
     document.getElementById("titre-page").textContent = T.titrePage;
     document.getElementById("texte-accueil").textContent = T.accueil;
     document.getElementById("texte-calendrier").textContent = T.calendrier;
+    document.getElementById("titre-natures").textContent = T.bandeauNatures;
+    document.getElementById("titre-poles").textContent = T.bandeauPoles;
+    document.getElementById("effacer-filtres").textContent = T.effacerFiltres;
     document.getElementById("bouton-voir-plus").textContent = T.voirPlus;
 }
 
@@ -321,6 +447,8 @@ async function chargerIndex() {
         afficherMessage(T.erreurChargement);
         return;
     }
+    lireAdresse();       // filtres d'un lien partagé (il faut connaître les natures et pôles d'abord)
+    preparerFiltres();
     afficherListe();
 }
 
@@ -329,6 +457,7 @@ async function chargerIndex() {
    ---------------------------------------------------------- */
 remplirTextesFixes();
 document.getElementById("bouton-voir-plus").addEventListener("click", voirPlus);
+document.getElementById("effacer-filtres").addEventListener("click", effacerFiltres);
 chargerIndex();
 
 // Hauteur de l'en-tête, transmise au CSS (--hauteur-entete) : elle sert à calculer

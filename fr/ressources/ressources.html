@@ -52,9 +52,24 @@
     <!-- Titre de la page, pour les lecteurs d'écran -->
     <h1 class="visuellement-masque" id="titre-page"></h1>
 
-    <!-- En haut : les bandeaux de filtres (étape 6) et la recherche (étape 7).
-         Il laisse à droite la place des disques. -->
-    <header class="ressources-entete" id="ressources-entete"></header>
+    <!-- En haut, fixe : les deux bandeaux de filtres, chacun sur une ligne.
+         Il laisse à droite la place des disques. Les boutons sont ajoutés par
+         ressources.js, d'après la liste des natures et des pôles de index.json. -->
+    <header class="ressources-entete" id="ressources-entete">
+        <div class="filtres" id="filtres" hidden>
+            <!-- Bandeau 1 : nature du document -->
+            <div class="bandeau" role="group" aria-labelledby="titre-natures">
+                <span class="bandeau-titre" id="titre-natures"></span>
+                <div class="bandeau-boutons" id="bandeau-natures"></div>
+            </div>
+            <!-- Bandeau 2 : pôle d'organisation (+ « Effacer les filtres » au bout de la ligne) -->
+            <div class="bandeau" role="group" aria-labelledby="titre-poles">
+                <span class="bandeau-titre" id="titre-poles"></span>
+                <div class="bandeau-boutons" id="bandeau-poles"></div>
+                <button type="button" class="effacer-filtres" id="effacer-filtres" hidden></button>
+            </div>
+        </div>
+    </header>
 
     <main class="ressources">
         <!-- Message (chargement impossible, aucun document…), caché tant qu'il n'y a rien à dire -->
