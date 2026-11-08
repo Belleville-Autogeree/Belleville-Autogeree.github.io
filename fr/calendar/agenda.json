@@ -49,6 +49,16 @@
       "qui": "tout le monde",
       "ou": "Agora",
       "description": "Recherches pédagogiques, Conception d'espaces allterantifs dans la ville, à l'école ou dans les lycées, Brigade contre le mal logement, Enquête sur la répression du mouveemnt social, Réflexion sur nos outils de représentation. Si ces sujets t'intéressent ou si tu as d'autres projets que tu voudrais qu'on initie ensemble, rendez-vous en agora !"
+    },
+    {
+      "titre": "Mise en commun et oraganisation",
+      "debut": "2026-11-09T13:00",
+      "fin": "2026-11-09T15:00",
+      "type": "reunion",
+      "quoi": "Mise en commun et oraganisation",
+      "qui": "Tout le monde",
+      "ou": "Agora",
+      "description": "On se retrouve pour organiser la suite de la section ! Organisation des groupes de travail, de l'assemblée génrale de mardi ou mercredi et des relations entre étudiant.es, professeur.es et l'administration."
     }
   ]
 }
