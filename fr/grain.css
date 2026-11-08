@@ -1,0 +1,74 @@
+/* ==========================================================
+   Cercles granuleux : grain procédural, sans aucune image
+   Principe : un bruit gris (SVG feTurbulence) posé sur la
+   couleur du cercle avec un mode de fusion, comme un calque
+   de bruit dans Photoshop.
+   ========================================================== */
+
+:root {
+  /* Tuile de bruit gris. grain.js (optionnel) la remplace par
+     un bruit pixel par pixel. */
+  --grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.61' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain-tile: 240px;
+  --grain-rendering: auto;
+}
+
+/* Conteneur : les cercles passent derrière son contenu */
+.grain-scene {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  container-type: inline-size; /* 1cqw = 1 % de la largeur du conteneur */
+  min-height: 100vh; /* sans hauteur, la section fait 0px (enfants en absolute) et cache tout */
+}
+
+.grain-disc {
+  /* Réglages, à changer par cercle */
+  --grain-color: #527ab5;  /* couleur du cercle */
+  --grain-blend: overlay;  /* mode de fusion (overlay = Incrustation) */
+  --grain-intensity: 2.1;  /* contraste du bruit ; 0 = pas de grain
+                              (en overlay, hard-light, soft-light) */
+  --grain-scale: 1;        /* taille du grain ; 2 = deux fois plus gros */
+
+  /* Position et diamètre, en % de la largeur du conteneur */
+  --x: 0cqw;
+  --y: 0cqw;
+  --d: 50cqw;
+
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--d);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  isolation: isolate; /* le bruit ne se mélange qu'avec la couleur du cercle */
+  background-color: var(--grain-color);
+  z-index: -1;        /* derrière le texte de .grain-scene */
+  pointer-events: none;
+}
+
+/* Le calque de bruit */
+.grain-disc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain-image);
+  background-size: calc(var(--grain-tile) * var(--grain-scale));
+  image-rendering: var(--grain-rendering);
+  filter: contrast(var(--grain-intensity));
+  mix-blend-mode: var(--grain-blend);
+}
+
+/* Les deux cercles du visuel, calés sur l'original */
+.grain-disc--bleu {
+  --grain-color: #527ab5;
+  --grain-blend: overlay;    /* Incrustation */
+  --grain-intensity: 2.1;
+}
+
+.grain-disc--jaune {
+  --grain-color: #f5f9a3;
+  --grain-blend: hard-light; /* Lumière crue */
+  --grain-intensity: 0.8;
+}

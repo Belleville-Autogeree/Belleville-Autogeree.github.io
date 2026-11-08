@@ -1,0 +1,195 @@
+@font-face {
+    font-family: 'supernotoriousdot';
+    src: url('../generalitems/fonts/supernotoriousdot.woff2');
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'raleway-bold';
+    src: url('../generalitems/fonts/Raleway-Bold.ttf');
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'raleway-italic';
+    src: url('../generalitems/fonts/Raleway-Italic.ttf');
+}
+
+body {
+    background-color: #913a4e;
+    margin: 0; /* évite une barre de défilement avec la section en 100vh */
+}
+
+h1 {
+    font-family: 'supernotoriousdot', sans-serif;
+    font-size: 9vw;
+    color: #cbcd3c;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: normal;
+    font-synthesis: none;
+    text-shadow: 3px 0 #3c7ed0, 0 0 30px rgb(60 126 208 / 55%);
+    animation: h1-glitch 3s infinite steps(1, end);
+}
+
+@keyframes h1-glitch {
+    0%, 88%, 92%, 96%, 100% {
+        text-shadow: 10px 5px #3c7ed0, 0 0 12px rgb(60 126 208 / 55%);
+    }
+
+    89% {
+        text-shadow: -30px 0 #3c7ed0, 4px 0 #cbcd3c;
+    }
+
+    90% {
+        text-shadow: 10px 0 #3c7ed0, -4px 0 #cbcd3c;
+    }
+
+    91% {
+        text-shadow: -100px 0 #3c7ed0, 2px 0 #cbcd3c;
+    }
+}
+
+.textedynamique {
+    font-family: 'raleway-italic', sans-serif;
+    color: #cbcd3c;
+    position: absolute;
+    top:72%;
+    transform: translateY(-50%);
+    transform: translateX(-50%);
+    left: 50%;
+}
+@media (max-width: 767px) {
+    .textedynamique {
+        top: 60%;
+        left: 50;
+        text-align: center;
+    }
+}
+
+.titresite {
+    font-family: 'supernotoriousdot', sans-serif;
+    position: absolute;
+    top: 50%;
+    left: 30cqw; /* commence à droite des cercles (qui finissent à 28cqw) : pas de chevauchement */
+    right: 0;
+    transform: translateY(-50%);
+    margin: 0;
+}
+@media (max-width: 767px) {
+    .titresite {
+        left: 0;
+        top: 50%;   
+        right: 0;
+        text-align: center;
+        font-size: 15vw;
+    }
+}
+
+/* ---------- RÉGLAGES DES CERCLES : c'est ici que tu modifies ---------- */
+.grain-scene {
+    --echelle: 1;        /* multiplie la taille ET la position des cercles et des liens */
+    --taille-liens: 28px; /* taille du texte des liens, en unités du viewBox (10 = 1cqw à échelle 1).
+                             Elle grossit déjà avec --echelle. */
+    --decalage-x: 0cqw;   /* déplace cercles + liens : négatif = vers la gauche (coupés par le bord) */
+    --decalage-y: 0cqw;   /* déplace cercles + liens : négatif = vers le haut (coupés par le bord) */
+
+    /* Cercle noir (en bas à droite) : réglages à part, il ne suit pas --echelle */
+    --noir-d: 14cqw;          /* diamètre */
+    --noir-marge: 3cqw;       /* distance aux bords droit et bas de la page */
+    --taille-lien-noir: 16px; /* taille de « À propos », en unités du cercle (diamètre = 100) */
+}
+
+@media (max-width: 767px) {
+    .grain-scene {
+        --echelle: 3.5;          /* cercles 3x plus gros sur téléphone */
+        --taille-liens: 28px;  /* augmente pour un texte encore plus gros */
+        --decalage-x: -30cqw;  /* cercles poussés hors de l'écran à gauche */
+        --decalage-y: -30cqw;    /* négatif = plus haut, positif = plus bas */
+        --noir-d: 35cqw;         /* cercle noir sur téléphone */
+        --noir-marge: 4cqw;
+    }
+}
+
+/* ---------- Liens courbés sur les cercles ---------- */
+.cercles-liens {
+    position: absolute;
+    left: calc(3cqw * var(--echelle) + var(--decalage-x)); /* = --x / --y du cercle bleu */
+    top: calc(3cqw * var(--echelle) + var(--decalage-y));
+    width: calc(25cqw * var(--echelle)); /* 22cqw (cercle) + 3cqw (décalage de l'ombre) */
+    height: calc(25cqw * var(--echelle));
+    overflow: visible;
+}
+
+.cercles-liens text {
+    font-family: 'raleway-bold', sans-serif;
+    font-size: var(--taille-liens);
+    text-anchor: middle; /* startOffset = centre du texte */
+}
+
+.lien-1 text { fill: #f5f9a3; } /* jaune sur le bleu */
+.lien-2 text { fill: #527ab5; } /* bleu sur le jaune */
+.lien-3 text { fill: #ffffff; } /* jaune sur le noir */
+/* ---------- Agrandissement des cercles au survol ---------- */
+/* préfixe .grain-scene : grain.css est chargé après home.css, il faut être plus précis que lui */
+.grain-scene .grain-disc--jaune { z-index: -2; } /* l'ombre reste derrière le bleu */
+.grain-scene .grain-disc--bleu  { z-index: -1; }
+
+/* Le cercle est une boîte fixe de la taille de la section, découpée en rond par clip-path.
+   Seul le découpage s'agrandit : la boîte (et donc le grain) ne bouge jamais.
+   --x, --y, --d gardent le même sens qu'avant (coin haut-gauche et diamètre). */
+.grain-scene .grain-disc {
+    --r: calc(var(--d) * var(--echelle) / 2);
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    clip-path: circle(var(--r) at calc((var(--x) + var(--d) / 2) * var(--echelle) + var(--decalage-x))
+                                  calc((var(--y) + var(--d) / 2) * var(--echelle) + var(--decalage-y)));
+    transition: clip-path .8s ease;
+}
+
+/* Cercle noir : même principe (boîte fixe + clip-path), mais placé depuis le coin
+   bas-droit de la page plutôt qu'avec --x / --y. Couleur et grain définis ici :
+   en « incrustation » le bruit disparaît sur du noir, on prend « lumière crue ». */
+.grain-scene .grain-disc--noir {
+    --grain-color: #161616;
+    --grain-blend: hard-light;
+    --grain-intensity: 1.2;   /* force du grain ; 0 = pas de grain */
+    --r: calc(var(--noir-d) / 2);
+    clip-path: circle(var(--r) at calc(100% - var(--noir-marge) - var(--noir-d) / 2)
+                                  calc(100% - var(--noir-marge) - var(--noir-d) / 2));
+}
+
+/* rayon 150vmax : couvre toute la page, quelle que soit sa forme.
+   Le noir est placé après le bleu dans le HTML : agrandi, il passe par-dessus. */
+.grain-scene:has(.lien-1:hover) .grain-disc--bleu,
+.grain-scene:has(.lien-2:hover) .grain-disc--jaune,
+.grain-scene:has(.lien-3:hover) .grain-disc--noir {
+    --r: 150vmax;
+}
+
+/* Calque du lien « À propos », exactement sur le cercle noir */
+.calque-noir {
+    position: absolute;
+    right: var(--noir-marge);
+    bottom: var(--noir-marge);
+    width: var(--noir-d);
+    height: var(--noir-d);
+    overflow: visible;
+}
+
+.calque-noir text {
+    font-family: 'raleway-bold', sans-serif;
+    font-size: var(--taille-lien-noir);
+    text-anchor:end; /* startOffset = centre du texte */
+}
+
+
+
+/* le titre passe au-dessus du cercle : il ne doit pas bloquer les clics */
+.titresite {
+    pointer-events: none;
+}

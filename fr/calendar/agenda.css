@@ -1,0 +1,889 @@
+/* ==========================================================
+   AGENDA – styles
+   Tout ce qui se règle (couleurs, tailles, espacements) est
+   dans :root juste en dessous. Retouche le design ici.
+   ========================================================== */
+
+:root {
+    /* ---------- Couleurs ---------- */
+    --couleur-fond: #f5f9a3;          /* fond de la page : le jaune du cercle de l'accueil */
+    --couleur-texte: #2b1a1f;         /* texte courant */
+    --couleur-bordeaux: #913a4e;      /* heures, traits, accents */
+
+    /* Grain du fond (mêmes réglages que le cercle jaune de l'accueil) */
+    --grain-fond-melange: hard-light; /* mode de fusion (Lumière crue) */
+    --grain-fond-intensite: 0.2;      /* contraste du bruit ; 0 = pas de grain */
+
+    /* Barres du haut (pas de coins arrondis) */
+    --couleur-barre-semaine: var(--couleur-bordeaux);   /* zone 1 : fond */
+    --couleur-texte-barre-semaine: var(--couleur-fond); /* zone 1 : texte */
+    --couleur-barre-jours: transparent;                 /* zone 2 : fond (on voit le grain) */
+    --couleur-bordure-barre: var(--couleur-bordeaux);
+    --couleur-jour-selectionne: var(--couleur-bordeaux);
+    --couleur-texte-jour-selectionne: var(--couleur-fond);
+    --couleur-repere-evenement: var(--couleur-bordeaux); /* petit point « il y a un événement » */
+
+    /* Cercle Ressources (le bleu de l'accueil) */
+    --couleur-ressources: #527ab5;
+    --couleur-texte-ressources: #f5f9a3;
+    --grain-ressources-melange: overlay;
+    --grain-ressources-intensite: 2.1;
+
+    /* Cercle Accueil (rouge, derrière le bleu) */
+    --couleur-accueil: #913A4E;
+    --couleur-texte-accueil: #f5f9a3;
+    --grain-accueil-melange: overlay;
+    --grain-accueil-intensite: 2.1;
+    --couleur-trait: var(--couleur-bordeaux);        /* traits des heures pleines */
+    --couleur-separateur: rgb(145 58 78 / 20%);      /* séparation entre colonnes de jours */
+
+    /* Cartes, par type – à caler sur la maquette */
+    --couleur-reunion: #ff0000;       /* rose clair */
+    --couleur-atelier: #f5c56b;       /* jaune */
+    --couleur-manif: #e8737f;         /* rouge rosé */
+    --couleur-formation: #e2d985;     /* bleu-gris */
+    --couleur-conference: #757eff;    /* lavande */
+    --couleur-table-ronde: #9adce0;   /* vert sauge */
+    --couleur-discussion: #c9b6e4;    /* pêche */
+    --couleur-intervention: #b696e4;  /* turquoise */
+    --couleur-neutre: #e4e0dc;        /* type inconnu */
+    --couleur-texte-carte: #2b1a1f;
+    --bordure-carte: 1.5px solid rgb(43 26 31 / 30%); /* contour : la carte jaune reste visible sur le fond jaune */
+    --couleur-filet: rgb(43 26 31 / 35%);    /* trait entre les lignes Quoi / Qui / Où */
+
+    --couleur-maintenant: #d1203a;    /* trait de l'heure actuelle */
+    --couleur-vide: rgb(145 58 78 / 60%);    /* « Rien de prévu ce jour-là » */
+
+    /* ---------- Typographie ---------- */
+    --police: 'raleway', system-ui, sans-serif;
+    --taille-texte: 1rem;
+    --taille-heure: 1.6rem;           /* « 8h » */
+    --taille-demi-heure: 0.8rem;      /* « 30 » */
+
+    /* ---------- Grille ---------- */
+    --hauteur-tranche: 20px;          /* hauteur d'une tranche de 15 min (1 h = 4 tranches) */
+    --largeur-colonne-heures: 4.5rem;
+    --epaisseur-trait: 2px;
+    --epaisseur-maintenant: 2px;
+
+    /* ---------- Cartes ---------- */
+    --rayon-carte: 12px;              /* coins arrondis */
+    --ecart-cartes: 4px;              /* espace autour de chaque carte */
+    --marge-interne-carte: 6px 8px;
+    --taille-titre-carte: 0.95rem;
+    --taille-etiquette: 0.7rem;       /* « Quoi ? », « Qui ? », « Où ? » */
+    --taille-valeur: 0.85rem;
+    --taille-carte-compacte: 0.75rem;
+
+    /* ---------- Barres du haut ---------- */
+    --taille-libelle-semaine: 1.15rem;
+    --taille-bouton-jour: 0.9rem;
+    --hauteur-barre-semaine: 52px;
+    --taille-fleche: 2.2rem;          /* flèches ‹ › */
+    --taille-fleche-mobile: 1.8rem;
+    --epaississement-fleche: 2px;     /* épaisseur ajoutée aux flèches au survol */
+
+    /* ---------- Cercles Ressources (bleu) et Accueil (rouge) ---------- */
+    /* Le rouge a le même centre que le bleu, en plus grand : il forme un anneau autour.
+       Taille choisie pour que la date du vendredi (barre des jours, mode semaine) reste visible. */
+    --diametre-ressources: clamp(120px, 11.5vw, 200px); /* diamètre du bleu */
+    --debord-ressources: 0.25;        /* part du cercle bleu qui sort de l'écran (en haut et à droite).
+                                         Plus grand = « Ressources » risque d'être coupé par le bord. */
+    --rapport-accueil: 1.45;          /* diamètre du rouge = 1,45 x celui du bleu */
+    --taille-texte-ressources: 15px;  /* « Ressources », en unités du bleu (diamètre = 100) */
+    --taille-texte-accueil: 11px;     /* « Accueil », en unités du rouge (diamètre = 100) : à peu près la même taille à l'écran */
+    --duree-agrandissement: .8s;
+
+    /* ---------- Popup ---------- */
+    --largeur-popup: 380px;
+    --hauteur-min-popup: 560px;       /* rectangle allongé en hauteur */
+    --marge-interne-popup: 20px;
+    --bordure-popup: 2px solid var(--couleur-bordeaux);
+    --couleur-fond-derriere-popup: rgb(0 0 0 / 45%); /* la page, grisée derrière la popup */
+    --taille-titre-popup: 1.4rem;
+
+    /* ---------- Espacements ---------- */
+    --marge-page: 16px;
+    --espace: 8px;
+}
+
+/* ---------- Polices ---------- */
+@font-face {
+    font-family: 'raleway';
+    src: url('../../generalitems/fonts/Raleway-Regular.ttf');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'raleway';
+    src: url('../../generalitems/fonts/Raleway-Bold.ttf');
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'raleway';
+    src: url('../../generalitems/fonts/Raleway-ExtraBold.ttf');
+    font-weight: 800;                 /* pour les flèches de la barre de semaine */
+    font-display: swap;
+}
+
+/* ---------- Page ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* La page a exactement la hauteur de l'écran et ne défile pas :
+   barres en haut, puis la grille (<main>), seule zone qui défile. */
+body {
+    /* largeur laissée aux cercles, à droite des barres (le rouge dépasse plus loin que le bleu) */
+    --place-cercle: calc(var(--diametre-ressources) * (0.5 - var(--debord-ressources) + var(--rapport-accueil) / 2) + var(--espace));
+    position: relative;               /* repère du cercle Ressources */
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;                   /* sur mobile : hauteur réelle, barre d'adresse comprise */
+    margin: 0;
+    overflow: hidden;
+    background: var(--couleur-fond);
+    color: var(--couleur-texte);
+    font-family: var(--police);
+    font-size: var(--taille-texte);
+}
+
+/* ---------- Fond jaune grainé ----------
+   Même principe que les cercles de l'accueil : une couleur, et par-dessus
+   un calque de bruit gris (--grain-image, fourni par grain.css) fusionné. */
+.fond-grain {
+    position: fixed;                  /* ne défile pas : le grain reste immobile */
+    inset: 0;
+    z-index: -1;
+    isolation: isolate;
+    background-color: var(--couleur-fond);
+    pointer-events: none;
+}
+
+.fond-grain::before,
+.cercle-ressources::before,
+.cercle-accueil::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain-image);
+    background-size: var(--grain-tile);
+    image-rendering: var(--grain-rendering);
+}
+
+.fond-grain::before {
+    filter: contrast(var(--grain-fond-intensite));
+    mix-blend-mode: var(--grain-fond-melange);
+}
+
+/* ---------- Cercle Ressources, en haut à droite ----------
+   Comme sur l'accueil : une boîte immobile, découpée en rond par clip-path.
+   Au survol du lien, seul le rayon du découpage grandit (le grain ne bouge pas). */
+.cercle-ressources {
+    --d: var(--diametre-ressources);
+    --r: calc(var(--d) / 2);
+    --centre: calc(var(--d) * (0.5 - var(--debord-ressources))); /* distance du centre aux bords haut et droit */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;                      /* au-dessus des barres et de la grille */
+    isolation: isolate;
+    background-color: var(--couleur-ressources);
+    clip-path: circle(var(--r) at calc(100% - var(--centre)) var(--centre));
+    transition: clip-path var(--duree-agrandissement) ease;
+    pointer-events: none;
+}
+
+.cercle-ressources::before {
+    filter: contrast(var(--grain-ressources-intensite));
+    mix-blend-mode: var(--grain-ressources-melange);
+}
+
+/* rayon 150vmax : couvre tout l'écran */
+body:has(.lien-ressources:hover) .cercle-ressources,
+body:has(.lien-ressources:focus-visible) .cercle-ressources {
+    --r: 150vmax;
+}
+
+/* Le calque du lien : un carré de la taille du cercle, à la même place */
+.calque-ressources {
+    position: absolute;
+    top: calc(var(--diametre-ressources) * var(--debord-ressources) * -1);
+    right: calc(var(--diametre-ressources) * var(--debord-ressources) * -1);
+    width: var(--diametre-ressources);
+    height: var(--diametre-ressources);
+    z-index: 11;                      /* au-dessus du cercle, même agrandi */
+    overflow: visible;
+}
+
+.lien-ressources text {
+    font-family: var(--police);
+    font-weight: 700;
+    font-size: var(--taille-texte-ressources);
+    fill: var(--couleur-texte-ressources);
+    text-anchor: middle;              /* startOffset = centre du texte */
+}
+
+.lien-ressources:focus-visible {
+    outline: none;                    /* le cercle qui s'agrandit sert d'indicateur */
+}
+
+/* ---------- Cercle Accueil, rouge, derrière le bleu ----------
+   Même principe et même centre que le bleu, mais plus grand
+   (--rapport-accueil) : on en voit l'anneau qui dépasse autour du bleu. */
+.cercle-accueil {
+    --d: calc(var(--diametre-ressources) * var(--rapport-accueil));
+    --r: calc(var(--d) / 2);
+    --centre: calc(var(--diametre-ressources) * (0.5 - var(--debord-ressources))); /* = celui du bleu */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9;                       /* juste sous le bleu */
+    isolation: isolate;
+    background-color: var(--couleur-accueil);
+    clip-path: circle(var(--r) at calc(100% - var(--centre)) var(--centre));
+    transition: clip-path var(--duree-agrandissement) ease;
+    pointer-events: none;
+}
+
+.cercle-accueil::before {
+    filter: contrast(var(--grain-accueil-intensite));
+    mix-blend-mode: var(--grain-accueil-melange);
+}
+
+/* Agrandi, il reste sous le bleu (comme le jaune sous le bleu sur l'accueil) */
+body:has(.lien-accueil:hover) .cercle-accueil,
+body:has(.lien-accueil:focus-visible) .cercle-accueil {
+    --r: 150vmax;
+}
+
+/* Calque du lien : un carré de la taille du rouge, centré au même endroit que le bleu */
+.calque-accueil {
+    --d: calc(var(--diametre-ressources) * var(--rapport-accueil));
+    --centre: calc(var(--diametre-ressources) * (0.5 - var(--debord-ressources)));
+    position: absolute;
+    top: calc(var(--centre) - var(--d) / 2);
+    right: calc(var(--centre) - var(--d) / 2);
+    width: var(--d);
+    height: var(--d);
+    z-index: 11;
+    overflow: visible;
+}
+
+.lien-accueil text {
+    font-family: var(--police);
+    font-weight: 700;
+    font-size: var(--taille-texte-accueil);
+    fill: var(--couleur-texte-accueil);
+    text-anchor: middle;
+}
+
+.lien-accueil:focus-visible {
+    outline: none;
+}
+
+/* Sur téléphone, toujours un seul jour : pas de vendredi à protéger, on agrandit un peu */
+@media (max-width: 767px) {
+    :root {
+        --diametre-ressources: 108px;    /* un peu plus petit : la barre de semaine doit tenir à côté */
+    }
+}
+
+/* ==========================================================
+   Barres du haut : semaine, puis jours. Fixes, sans coins
+   arrondis. À droite, on laisse la place du cercle.
+   ========================================================== */
+.agenda-barres {
+    flex: none;                       /* garde sa hauteur, ne défile pas */
+}
+
+/* Zone 1 : semaine — [‹] [libellé] [›] [Aujourd'hui] sur une seule ligne */
+.barre-semaine {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: var(--espace);
+    min-height: var(--hauteur-barre-semaine);
+    padding: var(--espace) var(--place-cercle) var(--espace) var(--marge-page);
+    background: var(--couleur-barre-semaine);
+    color: var(--couleur-texte-barre-semaine);
+}
+
+.libelle-semaine {
+    margin: 0;
+    text-align: center;
+    font-size: var(--taille-libelle-semaine);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.libelle-court {
+    display: none;                    /* affiché à la place du long sur mobile */
+}
+
+.barre-semaine button {
+    padding: 4px 12px;
+    border: 2px solid currentColor;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.barre-semaine button:hover,
+.barre-semaine button:focus-visible {
+    background: var(--couleur-texte-barre-semaine);
+    color: var(--couleur-barre-semaine);
+}
+
+/* Flèches semaine précédente / suivante : juste le signe, sans cadre, gros et gras */
+.barre-semaine .bouton-fleche {
+    padding: 0 6px;
+    border: none;
+    font-size: var(--taille-fleche);
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* Au survol : plus épaisses. La police n'a pas plus gras qu'ExtraBold (800),
+   on ajoute donc un contour de la même couleur autour du signe. */
+.barre-semaine .bouton-fleche:hover {
+    background: transparent;
+    color: inherit;
+    -webkit-text-stroke: var(--epaississement-fleche) currentColor;
+}
+
+.barre-semaine .bouton-fleche:focus-visible {
+    background: transparent;
+    color: inherit;
+    outline: 2px solid currentColor;
+}
+
+/* Mobile : libellé court et boutons plus serrés, pour que tout tienne sur une ligne */
+@media (max-width: 767px) {
+    .barre-semaine {
+        gap: 4px;
+        padding-left: var(--espace);
+    }
+
+    .libelle-long  { display: none; }
+    .libelle-court { display: inline; }
+
+    .libelle-semaine {
+        font-size: 0.9rem;
+    }
+
+    .barre-semaine button {
+        padding: 4px 8px;
+        font-size: 0.85rem;
+    }
+
+    .barre-semaine .bouton-fleche {
+        padding: 0 4px;
+        font-size: var(--taille-fleche-mobile);
+    }
+}
+
+/* Zone 2 : les jours (lundi → vendredi), fond transparent.
+   scrollbar-gutter réserve la même place que la barre de défilement de la grille :
+   en mode semaine, les en-têtes restent alignés au pixel près sur les colonnes. */
+.barre-jours {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding: 0 var(--place-cercle) 0 var(--marge-page);
+    overflow-y: hidden;
+    scrollbar-gutter: stable;
+    background: var(--couleur-barre-jours);
+    border-bottom: 2px solid var(--couleur-bordure-barre);
+}
+
+/* Mode semaine (PC) : une case vide au-dessus des heures, puis les 5 en-têtes.
+   Pas de place laissée au cercle : le vendredi va jusqu'au bord droit (le cercle passe par-dessus). */
+body[data-mode="semaine"] .barre-jours {
+    grid-template-columns: var(--largeur-colonne-heures) repeat(5, minmax(0, 1fr));
+    padding-right: 0;
+}
+
+/* Une case : « Lun » / « 9 nov » (en-tête simple ou bouton) */
+.case-jour {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--espace) 2px calc(var(--espace) + 6px);
+    margin: 0;
+    border: none;
+    border-left: 1px solid var(--couleur-separateur);
+    border-radius: 0;
+    background: transparent;
+    color: var(--couleur-bordeaux);
+    font: inherit;
+    font-size: var(--taille-bouton-jour);
+    line-height: 1.2;
+}
+
+/* en mode semaine, tout sur une ligne : « Lun 9 nov » */
+body[data-mode="semaine"] .case-jour {
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.35em;
+    padding-bottom: var(--espace);
+}
+
+/* Vendredi en mode semaine : la colonne va jusqu'au bord droit, mais son texte
+   est centré dans la partie que les cercles ne couvrent pas. S'il manque de place,
+   « Ven » et « 13 nov » passent sur deux lignes. */
+body[data-mode="semaine"] .case-jour:last-child {
+    flex-wrap: wrap;
+    padding-right: var(--place-cercle);
+}
+
+.jour-nom {
+    font-weight: 700;
+}
+
+/* aujourd'hui : date soulignée épais */
+.case-jour.est-aujourdhui .jour-date {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 3px;
+}
+
+/* Les boutons (mode jour : mobile et écran moyen) */
+.bouton-jour {
+    cursor: pointer;
+}
+
+.bouton-jour:hover,
+.bouton-jour.est-affiche {            /* jours visibles dans la grille (mode 3 jours) */
+    box-shadow: inset 0 -3px 0 var(--couleur-bordeaux);
+}
+
+.bouton-jour:focus-visible {
+    outline: 3px solid var(--couleur-bordeaux);
+    outline-offset: -3px;
+}
+
+/* jour sélectionné */
+.bouton-jour.est-selectionne {
+    background: var(--couleur-jour-selectionne);
+    color: var(--couleur-texte-jour-selectionne);
+}
+
+/* repère « au moins un événement ce jour-là » */
+.bouton-jour.a-evenements::after {
+    content: "";
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    transform: translateX(-50%);
+    background: var(--couleur-repere-evenement);
+}
+
+.bouton-jour.est-selectionne.a-evenements::after {
+    background: var(--couleur-texte-jour-selectionne);
+}
+
+/* ---------- La zone qui défile : la grille ---------- */
+.agenda {
+    flex: 1;
+    min-height: 0;                    /* sans ça, un enfant flex refuse de rétrécir et ne défile pas */
+    overflow-y: auto;
+    scrollbar-gutter: stable;         /* même réserve que la barre des jours (alignement) */
+    padding: var(--espace) var(--marge-page) var(--marge-page);
+}
+
+/* Mode semaine : la colonne du vendredi va jusqu'au bord droit, comme dans la barre des jours */
+body[data-mode="semaine"] .agenda {
+    padding-right: 0;
+}
+
+/* ==========================================================
+   Grille horaire
+   Colonnes : [heures] [jour 1] [jour 2] ...
+   (les noms des jours sont dans la barre des jours, au-dessus)
+   --nb-jours, --nb-tranches et --tranches-par-heure sont
+   écrits par agenda.js à partir de ses réglages.
+   ========================================================== */
+.agenda-grille {
+    display: grid;
+    grid-template-columns: var(--largeur-colonne-heures) repeat(var(--nb-jours, 1), minmax(0, 1fr));
+}
+
+/* Les traits des heures pleines : un trait en haut de chaque heure,
+   répété tous les (hauteur d'une tranche x tranches par heure). */
+.agenda-colonne-heures,
+.agenda-colonne-jour {
+    grid-row: 1;
+    display: grid;
+    grid-template-rows: repeat(var(--nb-tranches), var(--hauteur-tranche));
+    background-image: repeating-linear-gradient(
+        to bottom,
+        var(--couleur-trait) 0,
+        var(--couleur-trait) var(--epaisseur-trait),
+        transparent var(--epaisseur-trait),
+        transparent calc(var(--hauteur-tranche) * var(--tranches-par-heure))
+    );
+    border-bottom: var(--epaisseur-trait) solid var(--couleur-trait); /* trait de fin (21h) */
+}
+
+/* ---------- Colonne des heures ---------- */
+.agenda-colonne-heures {
+    grid-column: 1;
+    color: var(--couleur-bordeaux);
+    padding-right: var(--espace);
+    text-align: right;
+}
+
+.agenda-heure,
+.agenda-demi-heure {
+    line-height: 1;
+    padding-top: calc(var(--epaisseur-trait) + 2px); /* juste sous le trait */
+    white-space: nowrap;
+}
+
+.agenda-heure {
+    font-size: var(--taille-heure);
+    font-weight: 700;
+}
+
+.agenda-demi-heure {
+    font-size: var(--taille-demi-heure);
+}
+
+/* ---------- Colonnes des jours ---------- */
+.agenda-colonne-jour {
+    position: relative; /* repère pour le trait de l'heure actuelle (plus tard) */
+    border-left: 1px solid var(--couleur-separateur);
+}
+
+/* Chaque colonne de jour a une seule colonne interne : les cartes
+   s'y superposent, et leur largeur / marge gauche les mettent côte à côte. */
+.agenda-colonne-jour {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+/* ==========================================================
+   Cartes d'événement
+   --colonne et --nb-colonnes sont écrits par agenda.js :
+   3 événements en même temps → --nb-colonnes: 3, et chacun
+   a --colonne 0, 1 ou 2.
+   ========================================================== */
+.agenda-carte {
+    grid-column: 1;
+    position: relative;
+    z-index: 1;                       /* au-dessus des traits des heures */
+    width: calc(100% / var(--nb-colonnes) - var(--ecart-cartes));
+    margin: calc(var(--ecart-cartes) / 2) 0;
+    margin-left: calc(100% * var(--colonne) / var(--nb-colonnes) + var(--ecart-cartes) / 2);
+    min-height: 0;
+    overflow: hidden;                 /* un texte trop long ne déborde pas de la carte */
+
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: var(--marge-interne-carte);
+    border: var(--bordure-carte);
+    border-radius: var(--rayon-carte);
+    background: var(--couleur-neutre);
+    color: var(--couleur-texte-carte);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.agenda-carte:hover {
+    filter: brightness(0.96);
+}
+
+.agenda-carte:focus-visible {
+    outline: 3px solid var(--couleur-bordeaux);
+    outline-offset: 2px;
+    z-index: 2;
+}
+
+/* Un fond par type ; type inconnu = --couleur-neutre ci-dessus */
+.type-reunion   { background: var(--couleur-reunion); }
+.type-atelier   { background: var(--couleur-atelier); }
+.type-manif     { background: var(--couleur-manif); }
+.type-formation { background: var(--couleur-formation); }
+.type-conference   { background: var(--couleur-conference); }
+.type-table-ronde  { background: var(--couleur-table-ronde); }
+.type-discussion   { background: var(--couleur-discussion); }
+.type-intervention { background: var(--couleur-intervention); }
+
+/* Coupée par le haut ou le bas de la grille : coins carrés de ce côté */
+.agenda-carte.est-coupee-haut {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-top: 0;
+}
+
+.agenda-carte.est-coupee-bas {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: 0;
+}
+
+.carte-titre {
+    display: block;
+    font-size: var(--taille-titre-carte);
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.15;
+}
+
+/* Lignes « Quoi ? / Qui ? / Où ? » : étiquette à gauche, valeur à droite, filet au-dessus */
+.carte-ligne {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--espace);
+    padding-top: 3px;
+    border-top: 1px solid var(--couleur-filet);
+    line-height: 1.2;
+}
+
+.carte-etiquette {
+    flex-shrink: 0;
+    font-size: var(--taille-etiquette);
+}
+
+.carte-valeur {
+    font-size: var(--taille-valeur);
+    text-align: right;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.carte-ligne--ou .carte-valeur {
+    font-weight: 700;
+}
+
+/* Version compacte (événement court) : titre et horaire sur une ligne */
+.agenda-carte.est-compacte {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: var(--espace);
+    padding-block: 0;
+    font-size: var(--taille-carte-compacte);
+}
+
+.est-compacte .carte-titre {
+    font-size: inherit;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;          /* « Titre trop lo… » */
+}
+
+.carte-horaire {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* ---------- Journée vide ---------- */
+.agenda-vide {
+    grid-column: 1;
+    grid-row: 1 / span 4;
+    align-self: center;
+    margin: 0;
+    padding: 0 var(--espace);
+    text-align: center;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--couleur-vide);
+}
+
+/* ---------- Trait de l'heure actuelle ---------- */
+/* --position = nombre de tranches écoulées depuis le haut (écrit par agenda.js) */
+.agenda-maintenant {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--hauteur-tranche) * var(--position));
+    height: var(--epaisseur-maintenant);
+    transform: translateY(-50%);
+    background: var(--couleur-maintenant);
+    z-index: 3;                       /* au-dessus des cartes */
+    pointer-events: none;             /* ne gêne pas les clics */
+}
+
+.agenda-maintenant::before {          /* petit rond au début du trait */
+    content: "";
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--couleur-maintenant);
+    transform: translateY(-50%);
+}
+
+/* ---------- Messages ---------- */
+.agenda-message {
+    color: var(--couleur-bordeaux);
+    font-weight: 700;
+}
+
+.agenda-badge-test {
+    display: inline-block;
+    margin: 0 0 var(--espace);
+    padding: 2px 10px;
+    border-radius: 0;
+    background: var(--couleur-texte);
+    color: var(--couleur-fond);
+    font-size: 0.8rem;
+}
+
+/* Caché à l'écran, mais lu par les lecteurs d'écran */
+.visuellement-masque {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* ==========================================================
+   Popup d'un événement
+   Rectangle allongé, sans coins arrondis ni animation.
+   Le fond prend la couleur du type grâce aux classes .type-…
+   ========================================================== */
+.popup {
+    width: min(92vw, var(--largeur-popup));
+    max-height: 90dvh;                /* trop de texte : la popup défile à l'intérieur */
+    padding: 0;                       /* tout est dans .popup-contenu (clic dehors = clic sur le dialog) */
+    border: var(--bordure-popup);
+    border-radius: 0;
+    color: var(--couleur-texte-carte);
+    font-family: var(--police);
+    overflow-y: auto;
+}
+
+.popup.type-neutre {
+    background: var(--couleur-neutre);
+}
+
+.popup::backdrop {
+    background: var(--couleur-fond-derriere-popup);
+}
+
+.popup-contenu {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: min(var(--hauteur-min-popup), 85dvh);
+    padding: var(--marge-interne-popup);
+}
+
+.popup-fermer {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    padding: 4px 10px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.popup-fermer:focus-visible {
+    outline: 2px solid currentColor;
+}
+
+/* le type, en petites capitales au-dessus du titre */
+.popup-type {
+    margin: 0;
+    padding-right: 40px;              /* ne passe pas sous le × */
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.popup-titre {
+    margin: 0;
+    padding-right: 40px;
+    font-size: var(--taille-titre-popup);
+    line-height: 1.2;
+}
+
+.popup-date {
+    margin: 0;
+    font-weight: 700;
+}
+
+.popup-date::first-letter {           /* « lundi » → « Lundi » */
+    text-transform: uppercase;
+}
+
+.popup-image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.popup-infos {
+    margin: 0;
+}
+
+.popup-ligne {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--espace);
+    padding: 6px 0;
+    border-top: 1px solid var(--couleur-filet);
+}
+
+.popup-ligne dt {
+    flex-shrink: 0;
+    font-size: var(--taille-etiquette);
+}
+
+.popup-ligne dd {
+    margin: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.popup-ligne--ou dd {
+    font-weight: 700;
+}
+
+.popup-description {
+    margin: 0;
+    line-height: 1.45;
+    white-space: pre-line;            /* garde les retours à la ligne saisis dans Pages CMS */
+}
+
+/* hidden doit gagner sur les display: flex / block ci-dessus */
+.popup [hidden] {
+    display: none;
+}

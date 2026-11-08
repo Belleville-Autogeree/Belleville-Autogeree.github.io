@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda – Mobilisation ENSA Paris-Belleville</title>
+
+    <!-- grain.css fournit la texture de bruit (--grain-image), partagée avec l'accueil -->
+    <link rel="stylesheet" href="../grain.css">
+    <link rel="stylesheet" href="agenda.css">
+    <script src="../grain.js" defer></script>
+    <!-- defer : le script s'exécute une fois le HTML lu, il trouve donc tous les éléments -->
+    <script src="agenda.js" defer></script>
+</head>
+<body>
+    <!-- Fond jaune grainé, fixe derrière toute la page -->
+    <div class="fond-grain" aria-hidden="true"></div>
+
+    <!-- Cercle rouge « Accueil » : même centre que le bleu, plus grand, derrière lui.
+         On voit l'anneau rouge autour du bleu ; le texte est écrit dans cet anneau. -->
+    <div class="cercle-accueil" aria-hidden="true"></div>
+    <svg class="calque-accueil" viewBox="0 0 100 100">
+        <defs>
+            <!-- tracé : centre (50,50), rayon 47, tout près du bord du rouge, pour rester dans l'anneau
+                 (le bleu couvre jusqu'au rayon 34,5 avec --rapport-accueil: 1.45).
+                 Le tracé part du haut et tourne par la gauche : 25% = gauche, 37.5% = bas-gauche, 50% = bas.
+                 Si un mot est coupé par le bord de l'écran, ajuste startOffset (ex. 40% pour descendre un peu). -->
+            <path id="arc-accueil" d="M 50,3 A 47,47 0 1,0 50,97 A 47,47 0 1,0 50,3"/>
+        </defs>
+        <a class="lien-accueil" href="../home.html">
+            <text><textPath id="texte-accueil" href="#arc-accueil" startOffset="37.5%"></textPath></text>
+        </a>
+    </svg>
+
+    <!-- Cercle bleu « Ressources » en haut à droite (comme sur l'accueil).
+         Le cercle grossit au survol ; le lien est dans un calque à part pour ne pas bouger. -->
+    <div class="cercle-ressources" aria-hidden="true"></div>
+    <svg class="calque-ressources" viewBox="0 0 100 100">
+        <defs>
+            <!-- tracé : centre (50,50), rayon 44. Il part du HAUT du cercle et tourne par la gauche :
+                 0% = haut, 25% = gauche, 37.5% = bas-gauche, 50% = bas.
+                 (S'il partait plus près du texte, le début du mot tomberait avant le départ
+                 du tracé et ne serait pas affiché : c'est ce qui faisait disparaître le « R ».) -->
+            <path id="arc-ressources" d="M 50,6 A 44,44 0 1,0 50,94 A 44,44 0 1,0 50,6"/>
+        </defs>
+        <!-- même adresse que le lien Ressources de l'accueil -->
+        <a class="lien-ressources" href="../ressources/ressources.html">
+            <text><textPath id="texte-ressources" href="#arc-ressources" startOffset="37.5%"></textPath></text>
+        </a>
+    </svg>
+
+    <!-- Titre de la page, pour les lecteurs d'écran (le visuel, ce sont les barres) -->
+    <h1 class="visuellement-masque" id="titre-page"></h1>
+
+    <!-- Les deux barres, fixes en haut (seule la grille défile). Les textes sont remplis par agenda.js -->
+    <header class="agenda-barres">
+        <!-- Zone 1 : choix de la semaine -->
+        <div class="barre-semaine">
+            <button type="button" class="bouton-fleche" id="semaine-precedente"><span aria-hidden="true">‹</span></button>
+            <h2 class="libelle-semaine" id="libelle-semaine" aria-live="polite"></h2>
+            <button type="button" class="bouton-fleche" id="semaine-suivante"><span aria-hidden="true">›</span></button>
+            <button type="button" class="bouton-aujourdhui" id="bouton-aujourdhui"></button>
+        </div>
+
+        <!-- Zone 2 : les jours, du lundi au vendredi.
+             PC : en-têtes des colonnes (non cliquables) ; mobile : boutons pour choisir le jour -->
+        <div class="barre-jours" id="barre-jours"></div>
+    </header>
+
+    <!-- La seule partie qui défile -->
+    <main class="agenda">
+        <!-- Message d'erreur (fichier introuvable…), caché tant qu'il n'y a rien à dire -->
+        <p class="agenda-message" id="agenda-message" role="status" hidden></p>
+
+        <!-- La grille horaire. Le script ajoute dedans la colonne des heures (à gauche)
+             et une colonne par jour affiché. -->
+        <div class="agenda-grille" id="agenda-grille"></div>
+    </main>
+
+    <!-- Popup d'un événement, remplie par agenda.js au clic sur une carte.
+         Le <dialog> lui-même sert de fond : tout le contenu est dans .popup-contenu. -->
+    <dialog class="popup" id="popup" aria-labelledby="popup-titre">
+        <div class="popup-contenu">
+            <button type="button" class="popup-fermer" id="popup-fermer"><span aria-hidden="true">×</span></button>
+            <p class="popup-type" id="popup-type"></p>
+            <h2 class="popup-titre" id="popup-titre"></h2>
+            <p class="popup-date" id="popup-date"></p>
+            <img class="popup-image" id="popup-image" alt="" hidden>
+            <dl class="popup-infos" id="popup-infos"></dl>
+            <p class="popup-description" id="popup-description"></p>
+        </div>
+    </dialog>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <link href="./home.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="grain.css">
+    <script src="grain.js" defer></script> <!-- optionnel -->
+</head>
+<body>
+    <section class="grain-scene demo">
+        <!-- Les deux cercles : le jaune est l'ombre du bleu (même taille, décalé de 3cqw en bas à droite) -->
+        <div class="grain-disc grain-disc--jaune" style="--x: 6cqw; --y: 6cqw; --d: 22cqw" aria-hidden="true"></div>
+        <div class="grain-disc grain-disc--bleu"  style="--x: 3cqw; --y: 3cqw; --d: 22cqw" aria-hidden="true"></div>
+
+        <!-- Cercle noir, en bas à droite. Taille et position : --noir-d et --noir-marge dans home.css -->
+        <div class="grain-disc grain-disc--noir" aria-hidden="true"></div>
+
+        <!-- Les liens, dans un calque fixe au-dessus des cercles (il ne grossit pas avec eux).
+             Ce calque commence au coin du cercle bleu (3cqw, 3cqw) ; dans le viewBox, 10 unités = 1cqw.
+             Si tu bouges ou redimensionnes les cercles, recalcule les deux tracés ci-dessous. -->
+        <svg class="cercles-liens" viewBox="0 0 250 250">
+            <defs>
+                <!-- tracé du cercle bleu : centre (110,110), rayon 100 -->
+                <path id="arc-bleu" d="M 10,110 A 100,100 0 1,0 210,110 A 100,100 0 1,0 10,110"/>
+                <!-- tracé du cercle jaune : centre (140,140), rayon 100 -->
+                <path id="arc-jaune" d="M 40,140 A 100,100 0 1,0 240,140 A 100,100 0 1,0 40,140"/>
+            </defs>
+
+            <!-- LIEN 1 : en bas à droite du cercle bleu. startOffset : 25% = bas, 37.5% = bas-droite, 50% = droite -->
+            <a class="lien-1" href="./ressources/ressources.html">
+                <text><textPath href="#arc-bleu" startOffset="37.5%">Ressources</textPath></text>
+            </a>
+
+            <!-- LIEN 2 : en bas à droite du cercle jaune (sur la partie visible de l'ombre) -->
+            <a class="lien-2" href="calendar/agenda.html">
+                <text><textPath href="#arc-jaune" startOffset="37.5%">Calendrier</textPath></text>
+            </a>
+        </svg>
+
+        <!-- Lien du cercle noir : un calque de la taille du cercle, posé dessus (diamètre = 100 unités) -->
+        <svg class="calque-noir" viewBox="0 0 100 100">
+            <defs>
+                <!-- tracé : centre (50,50), rayon 34, sens horaire depuis la gauche.
+                     startOffset : 0% = gauche, 25% = haut, 37.5% = haut-droite, 50% = droite.
+                     Rayon 34 (et non 50) : les lettres, tournées vers l'extérieur, restent dans le cercle. -->
+                <path id="arc-noir" d="M 16,50 A 34,34 0 1,1 84,50 A 34,34 0 1,1 16,50"/>
+            </defs>
+
+            <!-- LIEN 3 : en haut à droite du cercle noir. À remplacer par la page « À propos » quand elle existera -->
+            <a class="lien-3" href="./about/about.html">
+                <text><textPath href="#arc-noir" startOffset="37.5%">À propos</textPath></text>
+            </a>
+        </svg>
+
+
+        <!-- ton contenu ici : il passe au-dessus des cercles -->
+        <h1 class="titresite">Belleville Autogeree</h1>
+        <div class="textedynamique">
+            <p>"Toujours dans la bienveillance :)"</p>
+        </div>
+    </section>
+
+</body>
+</html>

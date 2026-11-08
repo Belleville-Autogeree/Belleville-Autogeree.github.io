@@ -1,0 +1,95 @@
+# ==========================================================
+# Configuration de Pages CMS (https://pagescms.org)
+# Pages CMS lit ce fichier pour savoir quoi proposer à l'édition.
+# Les noms des champs (name:) doivent rester identiques à ceux
+# de fr/calendar/agenda.json : c'est ce que lit agenda.js.
+# ==========================================================
+
+# Où ranger les images envoyées depuis Pages CMS.
+# input  : le dossier du dépôt où le fichier est enregistré
+# output : le chemin écrit dans agenda.json (depuis la racine du site)
+media:
+  input: generalitems/images/agenda
+  output: /generalitems/images/agenda
+
+content:
+  - name: agenda
+    label: Agenda
+    type: file                        # un seul fichier, qui contient toute la liste
+    path: fr/calendar/agenda.json
+    format: json
+    fields:
+      - name: evenements
+        label: Événements
+        type: object
+        list: true                    # une liste : on peut ajouter, supprimer, réordonner
+        fields:
+          - name: titre
+            label: Titre
+            type: string
+            required: true
+
+          - name: debut
+            label: Début
+            description: Date et heure de Paris.
+            type: date
+            required: true
+            options:
+              time: true
+              format: "yyyy-MM-dd'T'HH:mm"   # → "2026-11-09T10:00", le format lu par agenda.js
+
+          - name: fin
+            label: Fin
+            description: Le même jour que le début (un événement qui passe minuit n'est pas affiché).
+            type: date
+            required: true
+            options:
+              time: true
+              format: "yyyy-MM-dd'T'HH:mm"
+
+          - name: type
+            label: Type
+            description: Donne la couleur de la carte.
+            type: select
+            required: true
+            options:
+              values:
+                - value: reunion
+                  label: Réunion
+                - value: atelier
+                  label: Atelier
+                - value: manif
+                  label: Manif
+                - value: formation
+                  label: Formation
+                - value: conference
+                  label: Conférence
+                - value: table-ronde
+                  label: Table ronde
+                - value: discussion
+                  label: Discussion
+                - value: intervention
+                  label: Intervention
+
+          - name: quoi
+            label: Quoi ?
+            type: string
+
+          - name: qui
+            label: Qui ?
+            description: Un groupe ou une commission, pas de nom de personne (le dépôt est public).
+            type: string
+
+          - name: ou
+            label: Où ?
+            type: string
+
+          - name: description
+            label: Description
+            description: Texte complet, affiché dans la fenêtre qui s'ouvre au clic sur la carte.
+            type: text
+
+          - name: image
+            label: Image
+            description: Facultatif (affiche, photo…). Affichée dans la fenêtre de l'événement. Pas de visage reconnaissable sans accord.
+            type: image

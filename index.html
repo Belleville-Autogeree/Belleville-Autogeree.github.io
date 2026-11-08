@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belleville Autogérée</title>
+
+    <!-- Redirection immédiate vers l'accueil en français.
+         (Plus tard, avec la version anglaise, on pourra choisir selon la langue du navigateur.) -->
+    <meta http-equiv="refresh" content="0; url=fr/home.html">
+    <link rel="canonical" href="./fr/home.html">
+    <script>
+        // replace : la page de redirection ne reste pas dans l'historique (le bouton retour ne boucle pas)
+        location.replace("fr/home.html");
+    </script>
+</head>
+<body>
+    <!-- Au cas où la redirection automatique ne marche pas -->
+    <p><a href="./fr/home.html">Aller à l'accueil</a></p>
+</body>
+</html>

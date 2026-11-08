@@ -1,0 +1,135 @@
+{
+  "evenements": [
+    {
+      "titre": "Cortège vers la République",
+      "debut": "2026-11-07T14:00",
+      "fin": "2026-11-07T17:00",
+      "type": "manif",
+      "quoi": "Manifestation",
+      "qui": "Ouvert à toutes et tous",
+      "ou": "Place de la République",
+      "description": "Départ groupé depuis l'école à 13h30. Prévoir de l'eau."
+    },
+    {
+      "titre": "Assemblée générale",
+      "debut": "2026-11-07T10:00",
+      "fin": "2026-11-07T11:30",
+      "type": "reunion",
+      "quoi": "AG hebdomadaire",
+      "qui": "Tout le monde",
+      "ou": "Amphi 1",
+      "description": "Ordre du jour : bilan de la semaine, votes sur les actions à venir."
+    },
+    {
+      "titre": "Atelier banderoles",
+      "debut": "2026-11-07T11:00",
+      "fin": "2026-11-07T13:00",
+      "type": "atelier",
+      "quoi": "Peinture et slogans",
+      "qui": "Commission visuels",
+      "ou": "Hall",
+      "description": "Le matériel est fourni. Venez avec des vêtements qui ne craignent rien."
+    },
+    {
+      "titre": "Prise de parole en public",
+      "debut": "2026-11-07T14:30",
+      "fin": "2026-11-07T16:00",
+      "type": "formation",
+      "quoi": "Formation",
+      "qui": "Commission communication",
+      "ou": "Salle 204",
+      "description": "Comment parler en AG ou au mégaphone."
+    },
+    {
+      "titre": "Point logistique",
+      "debut": "2026-11-07T17:30",
+      "fin": "2026-11-07T18:00",
+      "type": "reunion",
+      "quoi": "Réunion courte",
+      "qui": "Commission logistique",
+      "ou": "Cafétéria",
+      "description": "Événement de 30 minutes : doit s'afficher en version compacte."
+    },
+    {
+      "titre": "Appel aux AG",
+      "debut": "2026-11-07T13:00",
+      "fin": "2026-11-07T13:15",
+      "type": "reunion",
+      "quoi": "Annonce",
+      "qui": "Tout le monde",
+      "ou": "Hall",
+      "description": "Événement de 15 minutes : la plus petite carte possible."
+    },
+    {
+      "titre": "Projection-débat",
+      "debut": "2026-11-07T18:30",
+      "fin": "2026-11-07T20:30",
+      "type": "projection",
+      "quoi": "Film puis discussion",
+      "qui": "Ciné-club",
+      "ou": "Amphi 2",
+      "description": "Type inconnu (« projection ») : doit s'afficher avec le style neutre."
+    },
+    {
+      "titre": "Petit-déjeuner partagé",
+      "debut": "2026-11-07T08:00",
+      "fin": "2026-11-07T09:45",
+      "type": "atelier",
+      "quoi": "Accueil",
+      "qui": "Tout le monde",
+      "ou": "Cafétéria",
+      "description": "Commence avant 9h : doit être coupé en haut de la grille."
+    },
+    {
+      "titre": "Réunion de rentrée",
+      "debut": "2026-11-09T10:00",
+      "fin": "2026-11-09T11:30",
+      "type": "reunion",
+      "quoi": "Organisation de la semaine",
+      "qui": "Tout le monde",
+      "ou": "Amphi 1",
+      "description": "Semaine suivante : visible à partir de l'étape 3."
+    },
+    {
+      "titre": "Atelier tracts",
+      "debut": "2026-11-12T15:00",
+      "fin": "2026-11-12T17:00",
+      "type": "atelier",
+      "quoi": "Rédaction et impression",
+      "qui": "Commission communication",
+      "ou": "Salle 108",
+      "description": "Semaine suivante : visible à partir de l'étape 3."
+    },
+    {
+      "debut": "2026-11-07T12:00",
+      "fin": "2026-11-07T13:00",
+      "type": "reunion",
+      "quoi": "INVALIDE",
+      "description": "Titre manquant : doit être ignoré (message dans la console)."
+    },
+    {
+      "titre": "INVALIDE – fin avant début",
+      "debut": "2026-11-07T16:00",
+      "fin": "2026-11-07T15:00",
+      "type": "atelier"
+    },
+    {
+      "titre": "INVALIDE – date qui n'existe pas",
+      "debut": "2026-11-31T10:00",
+      "fin": "2026-11-31T11:00",
+      "type": "reunion"
+    },
+    {
+      "titre": "INVALIDE – passe minuit",
+      "debut": "2026-11-07T22:00",
+      "fin": "2026-11-08T01:00",
+      "type": "manif"
+    },
+    {
+      "titre": "INVALIDE – entièrement avant 9h",
+      "debut": "2026-11-07T07:00",
+      "fin": "2026-11-07T08:30",
+      "type": "formation"
+    }
+  ]
+}
