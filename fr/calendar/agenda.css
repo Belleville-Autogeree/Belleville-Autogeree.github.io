@@ -38,17 +38,17 @@
     --couleur-separateur: rgb(145 58 78 / 20%);      /* séparation entre colonnes de jours */
 
     /* Cartes, par type – à caler sur la maquette */
-    --couleur-reunion: #ff0000;       /* rose clair */
-    --couleur-atelier: #f5c56b;       /* jaune */
-    --couleur-manif: #e8737f;         /* rouge rosé */
-    --couleur-formation: #e2d985;     /* bleu-gris */
-    --couleur-conference: #757eff;    /* lavande */
-    --couleur-table-ronde: #9adce0;   /* vert sauge */
-    --couleur-discussion: #c9b6e4;    /* pêche */
-    --couleur-intervention: #b696e4;  /* turquoise */
-    --couleur-neutre: #e4e0dc;        /* type inconnu */
+    --couleur-reunion: #972626;       /* rose clair */
+    --couleur-atelier: #ffd9a1;       /* jaune */
+    --couleur-manif: #f79cea;         /* rouge rosé */
+    --couleur-formation: #fff9c0;     /* bleu-gris */
+    --couleur-conference: #525dff;    /* lavande */
+    --couleur-table-ronde: #1fafdb;   /* vert sauge */
+    --couleur-discussion: #ba89ff;    /* pêche */
+    --couleur-intervention: #cfadff;  /* turquoise */
+    --couleur-neutre: #fff4e9;        /* type inconnu */
     --couleur-texte-carte: #2b1a1f;
-    --bordure-carte: 1.5px solid rgb(43 26 31 / 30%); /* contour : la carte jaune reste visible sur le fond jaune */
+    --bordure-carte: none;            /* pas de contour autour des cartes */
     --couleur-filet: rgb(43 26 31 / 35%);    /* trait entre les lignes Quoi / Qui / Où */
 
     --couleur-maintenant: #d1203a;    /* trait de l'heure actuelle */
@@ -98,7 +98,7 @@
     --largeur-popup: 380px;
     --hauteur-min-popup: 560px;       /* rectangle allongé en hauteur */
     --marge-interne-popup: 20px;
-    --bordure-popup: 2px solid var(--couleur-bordeaux);
+    --bordure-popup: none;
     --couleur-fond-derriere-popup: rgb(0 0 0 / 45%); /* la page, grisée derrière la popup */
     --taille-titre-popup: 1.4rem;
 
