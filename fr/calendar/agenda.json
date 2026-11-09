@@ -98,6 +98,15 @@
       "quoi": "Moment festif",
       "qui": "Tout le monde",
       "ou": "Cour d'entrée "
+    },
+    {
+      "titre": "Projection de \"Soulèvements\"",
+      "debut": "2026-11-12T18:00",
+      "fin": "2026-11-12T21:00",
+      "type": "discussion",
+      "quoi": "Projection du film des soulèvements de la terre suivi d'une discussion ",
+      "qui": "Tout le monde ",
+      "ou": "Amphi Nord"
     }
   ]
 }
