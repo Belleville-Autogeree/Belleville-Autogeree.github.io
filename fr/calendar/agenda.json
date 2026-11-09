@@ -89,6 +89,15 @@
       "quoi": "Discussion autour de la mobilisation du personnel des écoles du 1er degré",
       "qui": "Personnel des écoles et étudiants",
       "ou": "D1"
+    },
+    {
+      "titre": "Moment festif ",
+      "debut": "2026-11-13T20:00",
+      "fin": "2026-11-13T21:30",
+      "type": "atelier",
+      "quoi": "Moment festif",
+      "qui": "Tout le monde",
+      "ou": "Cour d'entrée "
     }
   ]
 }
