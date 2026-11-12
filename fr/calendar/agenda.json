@@ -82,15 +82,6 @@
       "image": "/generalitems/images/agenda/Screenshot_20261109_021410_Brave.jpg"
     },
     {
-      "titre": "Réunion du personnel des écoles du 19eme ",
-      "debut": "2026-11-10T17:30",
-      "fin": "2026-11-10T19:30",
-      "type": "reunion",
-      "quoi": "Discussion autour de la mobilisation du personnel des écoles du 1er degré",
-      "qui": "Personnel des écoles et étudiants",
-      "ou": "D1"
-    },
-    {
       "titre": "Moment festif ",
       "debut": "2026-11-13T20:00",
       "fin": "2026-11-13T21:30",
@@ -127,6 +118,15 @@
       "qui": "Toute personne intéressée",
       "ou": "Agora/salle des profs ",
       "description": "1) On organise la journée ou on invitera index sur la lutte contre les violences policières. \n2) On fait un point sur les objectifs de notre enquête sur les repressions du mouvement social. \n3) On continue le travail ! "
+    },
+    {
+      "titre": "AG enseignante ",
+      "debut": "2026-11-13T13:00",
+      "fin": "2026-11-13T14:30",
+      "type": "reunion",
+      "quoi": "Réunion d'explication de la section pilote auprès des enseignant.es.",
+      "qui": "Enseignant.es et étudiant.es mobilisé.es",
+      "ou": "Salle 12"
     }
   ]
 }
