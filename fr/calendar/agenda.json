@@ -162,6 +162,14 @@
       "type": "atelier",
       "qui": "On continue l'enquête sur la répression ",
       "ou": "D1"
+    },
+    {
+      "titre": "JOURNÉE INDEX",
+      "debut": "2026-11-27T10:00",
+      "fin": "2026-11-17T18:00",
+      "type": "intervention",
+      "quoi": "Journée de tables rondes et d'ateliers avec Index ",
+      "ou": "Partout"
     }
   ]
 }
