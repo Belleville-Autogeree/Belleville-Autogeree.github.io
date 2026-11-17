@@ -154,6 +154,14 @@
       "type": "atelier",
       "quoi": "On continue l'enquête sur la répression ",
       "ou": "D1"
+    },
+    {
+      "titre": "Atelier ENQUÊTE répression ",
+      "debut": "2026-11-23T13:00",
+      "fin": "2026-11-23T18:00",
+      "type": "atelier",
+      "qui": "On continue l'enquête sur la répression ",
+      "ou": "D1"
     }
   ]
 }
