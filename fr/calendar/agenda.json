@@ -170,6 +170,16 @@
       "type": "intervention",
       "quoi": "Journée de tables rondes et d'ateliers avec Index ",
       "ou": "Partout"
+    },
+    {
+      "titre": "Vincennes terrain militaire (CIV, CRA) : Travail d'investigation avec INDEX",
+      "debut": "2026-11-25T13:00",
+      "fin": "2026-11-25T14:30",
+      "type": "atelier",
+      "quoi": "Préparation de la rencontre avec INDEX. ",
+      "qui": "Le groupe investigagtion pour la rencontre avec INDEX",
+      "ou": "Agora",
+      "description": "Analyse du terrain historiquement militaire de Vincennes. Présentation de plusieurs travaux de recherches: le Centre d'Identification de Vincennes (construits et utilisés par les Nazis puis par les autorités françaises contre les algériens en France), le Centre de Rétention administrative (utilisé actuellement pour la répression des sans-papiers), l'Université de Vincennes, Le Fort de Vincennes"
     }
   ]
 }
