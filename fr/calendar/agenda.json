@@ -200,6 +200,15 @@
       "qui": "la boite ",
       "ou": "cour d'entrée",
       "description": "Code vestimentaire : CRS\nOn détruit la boite et on filme."
+    },
+    {
+      "titre": "Finission et peinture sur la boite ",
+      "debut": "2026-11-23T13:00",
+      "fin": "2026-11-23T15:00",
+      "type": "atelier",
+      "quoi": "fabrication et peinture ",
+      "qui": "la boite ",
+      "ou": "atelier bois "
     }
   ]
 }
