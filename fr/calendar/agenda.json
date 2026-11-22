@@ -165,7 +165,7 @@
     },
     {
       "titre": "JOURNÉE INDEX",
-      "debut": "2026-11-27T10:00",
+      "debut": "2026-11-27T13:00",
       "fin": "2026-11-27T18:00",
       "type": "intervention",
       "quoi": "Journée de tables rondes et d'ateliers avec Index ",
@@ -222,14 +222,6 @@
       "ou": "D1",
       "description": "Francesco Sebregondi va nous présenter les méthodes d'enquête forensic que l'agence INDEX utilisent. Leur équipe nous transmettra des documents qui nous permettrons d'investir d'autres exemples d'enquête que celle de Vincennes déjà entamée. ",
       "image": "/generalitems/images/agenda/franceso Sebregondi.png"
-    },
-    {
-      "titre": "EDC: modélisation de scène ",
-      "debut": "2026-11-27T15:00",
-      "fin": "2026-11-27T15:00",
-      "type": "atelier",
-      "quoi": "travail sur les cas de modélisation",
-      "qui": "Index "
     },
     {
       "titre": "ASSEMBLEE GERNERALE",
