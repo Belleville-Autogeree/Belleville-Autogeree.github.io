@@ -230,6 +230,16 @@
       "type": "atelier",
       "quoi": "travail sur les cas de modélisation",
       "qui": "Index "
+    },
+    {
+      "titre": "ASSEMBLEE GERNERALE",
+      "debut": "2026-11-24T10:00",
+      "fin": "2026-11-24T12:00",
+      "type": "reunion",
+      "quoi": "assemblée générale",
+      "qui": "tout le monde !",
+      "ou": "amphi huet",
+      "description": "De quelle maniere on continue de se mobiliser ? Quelle fin de semestre à l'école? "
     }
   ]
 }
