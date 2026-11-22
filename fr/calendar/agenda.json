@@ -166,7 +166,7 @@
     {
       "titre": "JOURNÉE INDEX",
       "debut": "2026-11-27T10:00",
-      "fin": "2026-11-17T18:00",
+      "fin": "2026-11-27T18:00",
       "type": "intervention",
       "quoi": "Journée de tables rondes et d'ateliers avec Index ",
       "ou": "Partout"
@@ -204,7 +204,7 @@
       "description": "Code vestimentaire : CRS\nOn détruit la boite et on filme."
     },
     {
-      "titre": "Finission et peinture sur la boite ",
+      "titre": "Finition et peinture sur la boite ",
       "debut": "2026-11-23T13:00",
       "fin": "2026-11-23T15:00",
       "type": "atelier",
