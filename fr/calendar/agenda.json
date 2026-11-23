@@ -233,6 +233,14 @@
       "qui": "tout le monde !",
       "ou": "amphi huet",
       "description": "De quelle maniere on continue de se mobiliser ? Quelle fin de semestre à l'école? "
+    },
+    {
+      "titre": "Réunion revue ",
+      "debut": "2026-11-30T13:00",
+      "fin": "2026-11-30T13:00",
+      "type": "reunion",
+      "quoi": "élaboration hebdomadaire de la revue ",
+      "ou": "D1"
     }
   ]
 }
